@@ -8,7 +8,7 @@ class SettingsView(MoneyTrackerWidget):
 
     @classmethod
     def getIconPath(cls):
-        return ""
+        return "./images/book-keeping.png"
 
     @classmethod
     def getName(cls):

@@ -8,7 +8,7 @@ class TransactionEditView(MoneyTrackerWidget):
 
     @classmethod
     def getIconPath(cls):
-        return ""
+        return "./images/add.png"
 
     @classmethod
     def getName(cls):
