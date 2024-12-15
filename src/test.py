@@ -1,38 +1,60 @@
+# test.py
+
+import unittest
+from datetime import datetime
+from src.models.account_book import AccountBook
+from src.models.transaction import Transaction
+from src.services.cloud_sync_service import CloudSyncService
+from src.services.data_service import DataService
+import os
+
+
+class TestServices(unittest.TestCase):
+
+    def setUp(self):
+        """
+        Set up the test environment. Initialize the services and create test data.
+        """
+        self.cred_path = 'path/to/your/firebase/credentials.json'
+        self.db_url = 'https://your-database-name.firebaseio.com'
+        self.cloud_service = CloudSyncService(self.cred_path, self.db_url)
+        self.file_path = 'test_account_books.json'
+        self.data_service = DataService(self.file_path)
+
+        self.transaction = Transaction(
+            id=1,
+            amount=100.0,
+            date=datetime.now(),
+            description='Test transaction'
+        )
+        self.account_book = AccountBook(name='Test Account Book')
+        self.account_book.add_transaction(self.transaction)
+
+    def tearDown(self):
+        """
+        Clean up the test environment. Remove the test file if it exists.
+        """
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
+
+    def test_upload_and_download_account_book(self):
+        """
+        Test uploading and downloading account books with CloudSyncService.
+        """
+        self.cloud_service.upload_account_book(self.account_book)
+        account_books = self.cloud_service.download_account_books()
+        self.assertTrue(any(ab.name == self.account_book.name for ab in account_books))
+
+    def test_write_and_read_account_books(self):
+        """
+        Test writing and reading account books with DataService.
+        """
+        self.data_service.write_account_books([self.account_book])
+        account_books = self.data_service.read_account_books()
+        self.assertTrue(any(ab.name == self.account_book.name for ab in account_books))
+
 
 if __name__ == '__main__':
-    pass
-
-
-def test_service():
-    # Example usage of DataService and CloudSyncService
-
-    from services import DataService
-    from services import CloudSyncService
-
-    # Initialize DataService with a local JSON file path
-    data_service = DataService('data.json')
-
-    # Add a new record
-    new_record = {'id': 1, 'name': 'Sample Record', 'amount': 100}
-    data_service.add_record(new_record)
-
-    # Read data
-    data = data_service.read_data()
-    print('Data read from local file:', data)
-
-    # Update a record
-    updated_record = {'id': 1, 'name': 'Updated Record', 'amount': 150}
-    data_service.update_record(1, updated_record)
-
-    # Delete a record
-    data_service.delete_record(1)
-
-    # Initialize CloudSyncService with Firebase credentials
-    cloud_sync_service = CloudSyncService('path/to/credentials.json')
-
-    # Upload data to Firestore
-    cloud_sync_service.upload_data('collection_name', data)
-
-    # Download data from Firestore
-    downloaded_data = cloud_sync_service.download_data('collection_name')
-    print('Data downloaded from Firestore:', downloaded_data)
+    # To run the unit tests, use the following command:
+    # python -m unittest test.py
+    unittest.main()
