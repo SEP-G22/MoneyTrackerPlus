@@ -1,7 +1,7 @@
 # src/services/cloud_sync_service.py
 
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import credentials, db, _apps
 from typing import List, Dict, Any
 from datetime import datetime
 from src.models.account_book import AccountBook
@@ -18,8 +18,9 @@ class CloudSyncService:
         :param db_url: URL of the Firebase Realtime Database.
         :type db_url: str
         """
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred, {'databaseURL': db_url})
+        if not _apps:
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred, {'databaseURL': db_url})
         self.db_ref = db.reference()
 
     def upload_account_book(self, account_book: AccountBook) -> None:

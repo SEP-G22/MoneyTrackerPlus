@@ -39,7 +39,10 @@ MoneyTrackerPlus/
 
 ### 使用說明
 - Firebase 設定
-  - 安裝套件 `pip install git+https://github.com/ozgur/python-firebase`
-  - 請在 `src/services/cloud_sync_service.py` 中設定 Firebase 的金鑰
-  - 請在 Firebase 中設定資料庫規則
-  - 其他內容可以參考[Python 串接 Firebase RealTime Database 存取資料](https://ithelp.ithome.com.tw/articles/10335735)以及[Firebase-介紹 & 建立專案](https://ithelp.ithome.com.tw/articles/10205404)
+  - 到 Google Firebase 註冊帳號並建立專案
+  - 請在 Firebase 中設定建立 RealTime Database
+  - 在 Firebase > 專案設定 > 服務帳戶 > Python > 產生私密金鑰 獲取金鑰檔案
+  - 將金鑰檔案放置於專案`src/Firebase_credit/`中，並在需要使用的地方引入該金鑰檔案的路徑
+  - 其他內容可以參考
+    - [Python 串接 Firebase RealTime Database 存取資料](https://ithelp.ithome.com.tw/articles/10335735)
+    - [如何透過 Firebase Realtime Database](https://vocus.cc/article/63df0b17fd897800013e8019)
