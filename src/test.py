@@ -2,10 +2,8 @@
 
 import unittest
 from datetime import datetime
-from src.models.account_book import AccountBook
-from src.models.transaction import Transaction
-from src.services.cloud_sync_service import CloudSyncService
-from src.services.data_service import DataService
+from models import *
+from services import *
 import os
 
 
