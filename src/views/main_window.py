@@ -1,8 +1,10 @@
 from typing import Type, Final
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHBoxLayout, QListWidget, QListWidgetItem, \
-    QStackedWidget, QScrollArea, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QListWidget, QListWidgetItem, \
+    QStackedWidget, QScrollArea, QWidget, QLabel, QDateEdit, QComboBox, QLineEdit, QPushButton \
+    
+from PyQt5.QtCore import QDate
 
 from .chart_view import ChartView
 from .money_tracker_widget import MoneyTrackerWidget
@@ -40,7 +42,7 @@ class MoneyTrackerPlusView(QWidget):
         # 创建右侧的内容区域
         self.content_stack = QStackedWidget()
         for it in self.items:
-            self.content_stack.addWidget(it())
+            self.content_stack.addWidget(it(self))
 
         # 设置主布局
         self.layout = QHBoxLayout(self)

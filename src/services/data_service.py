@@ -4,8 +4,8 @@ import json
 import os
 from typing import List, Dict, Any
 from datetime import datetime
-from src.models.account_book import AccountBook
-from src.models.transaction import Transaction
+from models.account_book import AccountBook
+from models.transaction import Transaction
 
 
 class DataService:
