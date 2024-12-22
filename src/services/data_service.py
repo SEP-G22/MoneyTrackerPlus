@@ -4,11 +4,13 @@ import json
 import os
 from typing import List, Dict, Any
 from datetime import datetime
-from models.account_book import AccountBook
-from models.transaction import Transaction
+from models import *
 
 
 class DataService:
+    """
+    This is a Service class that is responsible for reading and writing account books to a local JSON file.
+    """
     def __init__(self, file_path: str) -> None:
         """
         Initialize the DataService with the path to the JSON file.
