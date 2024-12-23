@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from datetime import datetime
 from models.account_book import AccountBook
 from models.transaction import Transaction
+from models.transaction import TransactionCategory
 
 
 class CloudSyncService:
@@ -68,6 +69,8 @@ class CloudSyncService:
                     amount=transaction_data['amount'],
                     date=datetime.fromisoformat(transaction_data['date']),
                     description=transaction_data['description'],
+                    type=transaction_data['type'],
+                    category=TransactionCategory(category=transaction_data['category'], type=transaction_data['type'])
                 )
                 account_book.add_transaction(transaction)
 

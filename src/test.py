@@ -3,6 +3,7 @@
 import unittest
 from datetime import datetime
 from models import *
+from models.transaction import TransactionCategory
 from services import *
 import os
 
@@ -13,8 +14,8 @@ class TestServices(unittest.TestCase):
         """
         Set up the test environment. Initialize the services and create test data.
         """
-        self.cred_path = './Firebase_credit/moneytrackerplus-firebase-adminsdk-aqbar-5c9acd5080.json'
-        self.db_url = 'https://moneytrackerplus-default-rtdb.firebaseio.com/:1000'
+        self.cred_path = './Firebase_credit/moneytrackerplus-firebase-adminsdk-aqbar-de7e7069eb.json'
+        self.db_url = 'https://moneytrackerplus-default-rtdb.firebaseio.com'
         self.cloud_service = CloudSyncService(self.cred_path, self.db_url)
         self.file_path = 'test_account_books.json'
         self.data_service = DataService(self.file_path)
@@ -23,7 +24,9 @@ class TestServices(unittest.TestCase):
             id=1,
             amount=100.0,
             date=datetime.now(),
-            description='Test transaction'
+            description='Test transaction',
+            type='Expense',
+            category=TransactionCategory(category='Food & Drinks', type='Expense')
         )
         self.account_book = AccountBook(name='Test Account Book')
         self.account_book.add_transaction(self.transaction)

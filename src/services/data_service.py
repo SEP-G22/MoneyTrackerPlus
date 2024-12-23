@@ -5,6 +5,7 @@ import os
 from typing import List, Dict, Any
 from datetime import datetime
 from models import *
+from models.transaction import TransactionCategory
 
 
 class DataService:
@@ -58,7 +59,9 @@ class DataService:
                 id=transaction_data['id'],
                 amount=transaction_data['amount'],
                 date=datetime.fromisoformat(transaction_data['date']),
-                description=transaction_data['description']
+                description=transaction_data['description'],
+                type=transaction_data['type'],
+                category=TransactionCategory(category=transaction_data['category'], type=transaction_data['type'])
             )
             account_book.add_transaction(transaction)
         return account_book
