@@ -48,3 +48,19 @@ class AccountBook:
             'name': self.name,
             'transactions': [transaction.to_dict() for transaction in self.transactions]
         }
+
+    @classmethod
+    def from_json(cls, data: Dict[str, Any]) -> 'AccountBook':
+        """
+        Create an AccountBook instance from a JSON dictionary.
+
+        :param data: JSON dictionary representing an account book.
+        :type data: Dict[str, Any]
+        :return: AccountBook instance.
+        :rtype: AccountBook
+        """
+        account_book = cls(data['name'])
+        for transaction_data in data['transactions']:
+            transaction = Transaction.from_json(transaction_data)
+            account_book.add_transaction(transaction)
+        return account_book

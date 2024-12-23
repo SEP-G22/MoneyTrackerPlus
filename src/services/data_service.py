@@ -5,7 +5,6 @@ import os
 from typing import List, Dict, Any
 from datetime import datetime
 from models import *
-from models.transaction import TransactionCategory
 
 
 class DataService:
@@ -53,15 +52,4 @@ class DataService:
         :return: AccountBook instance.
         :rtype: AccountBook
         """
-        account_book = AccountBook(data['name'])
-        for transaction_data in data['transactions']:
-            transaction = Transaction(
-                id=transaction_data['id'],
-                amount=transaction_data['amount'],
-                date=datetime.fromisoformat(transaction_data['date']),
-                description=transaction_data['description'],
-                type=transaction_data['type'],
-                category=TransactionCategory(category=transaction_data['category'], type=transaction_data['type'])
-            )
-            account_book.add_transaction(transaction)
-        return account_book
+        return AccountBook.from_json(data)

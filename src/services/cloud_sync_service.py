@@ -3,10 +3,8 @@
 import firebase_admin
 from firebase_admin import credentials, db, _apps
 from typing import List, Dict, Any
-from datetime import datetime
-from models.account_book import AccountBook
-from models.transaction import Transaction
-from models.transaction import TransactionCategory
+
+from models import *
 
 
 class CloudSyncService:
@@ -58,21 +56,5 @@ class CloudSyncService:
         :return: AccountBook instance.
         :rtype: AccountBook
         """
-        account_book = AccountBook(data['name'])
-
-        # 確認 'transactions' 是否存在並且是可迭代物件
-        transactions = data.get('transactions', [])
-        if isinstance(transactions, list):  # 確認是清單
-            for transaction_data in transactions:
-                transaction = Transaction(
-                    id=transaction_data['id'],
-                    amount=transaction_data['amount'],
-                    date=datetime.fromisoformat(transaction_data['date']),
-                    description=transaction_data['description'],
-                    type=transaction_data['type'],
-                    category=TransactionCategory(category=transaction_data['category'], type=transaction_data['type'])
-                )
-                account_book.add_transaction(transaction)
-
-        return account_book
+        return AccountBook.from_json(data)
 
