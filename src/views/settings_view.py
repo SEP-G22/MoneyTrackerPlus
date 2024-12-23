@@ -3,9 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox
 from .money_tracker_widget import MoneyTrackerWidget
 from models import *
 from utils import *
-from services.config_service import ConfigService
-from services.data_service import DataService
-from services.cloud_sync_service import CloudSyncService
+from services import *
 
 
 class SettingsView(MoneyTrackerWidget):
@@ -57,7 +55,7 @@ class SettingsView(MoneyTrackerWidget):
 
         # 4. 顯示並修改帳本設定
         self.accountbook_settings_layout = QFormLayout()
-        self.accountbook_name_input = QLineEdit()
+        self.accountbook_name_input = QLineEdit(self.accountbook_combo.currentText())
         rename_button = QPushButton("更改名稱")
         rename_button.setObjectName("cancelButton")
         rename_button.clicked.connect(self.rename_account_book)
@@ -89,23 +87,31 @@ class SettingsView(MoneyTrackerWidget):
     def add_local_account_book(self):
         accountbook_name = self.name_input.text().strip()
         if accountbook_name:
-            self.set_up = addNewAccountBook()
-            success = self.set_up.setUp(accountbook_name)
-            if success:
-                QMessageBox.information(self, "成功", f"本地帳本 '{accountbook_name}' 新增成功！")
-                self.load_account_books()
-            else:
-                QMessageBox.warning(self, "失敗", "本地帳本新增失敗，請重試！")
+            try:
+                if any(b.name == accountbook_name for b in self.data_service.read_account_books()):
+                    QMessageBox.warning(self, "錯誤", f"本地帳本 '{accountbook_name}' 已存在！")
+                else:
+                    new_book = AccountBook(name=accountbook_name)
+                    self.data_service.write_account_books(self.data_service.read_account_books() + [new_book])
+                    QMessageBox.information(self, "成功", f"本地帳本 '{accountbook_name}' 新增成功！")
+                    self.load_account_books()
+                    self.accountbook_combo.setCurrentText(accountbook_name)  # 選擇剛新增的帳本
+                    self.name_input.clear()  # 清空輸入框
+            except Exception as e:
+                QMessageBox.warning(self, "錯誤", f"新增本地帳本 '{accountbook_name}' 失敗！")
+                print(e)
         else:
             QMessageBox.warning(self, "錯誤", "請輸入帳本名稱！")
 
-    def add_cloud_account_book(self):
+    def add_cloud_account_book(self):  # Not test yet
         accountbook_name = self.name_input.text().strip()
         if accountbook_name:
             new_book = AccountBook(name=accountbook_name)
             self.cloud_service.upload_account_book(new_book)
             QMessageBox.information(self, "成功", f"雲端帳本 '{accountbook_name}' 新增成功！")
             self.load_account_books()
+            self.accountbook_combo.setCurrentText(accountbook_name)
+            self.name_input.clear()
         else:
             QMessageBox.warning(self, "錯誤", "請輸入帳本名稱！")
 
@@ -113,19 +119,21 @@ class SettingsView(MoneyTrackerWidget):
         selected_book = self.accountbook_combo.currentText()
         self.accountbook_name_input.setText(selected_book)
 
-    def rename_account_book(self):
+    def rename_account_book(self):  # Not finish yet
         current_name = self.accountbook_combo.currentText()
         new_name = self.accountbook_name_input.text().strip()
         if new_name and current_name != new_name:
             # Implement renaming logic here
             QMessageBox.information(self, "成功", f"帳本名稱已更改為 '{new_name}'")
             self.load_account_books()
+            self.accountbook_combo.setCurrentText(new_name)
         else:
             QMessageBox.warning(self, "錯誤", "請輸入新的帳本名稱！")
 
     def delete_account_book(self):
         current_name = self.accountbook_combo.currentText()
         # Implement deletion logic here
+        self.data_service.write_account_books([b for b in self.data_service.read_account_books() if b.name != current_name])
         QMessageBox.information(self, "成功", f"帳本 '{current_name}' 已刪除")
         self.load_account_books()
 

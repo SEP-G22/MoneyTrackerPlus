@@ -5,3 +5,5 @@
 __pycache__/
 /src/Firebase_credit/
 .DS_Store
+/src/config.json
+/src/local_account_books.json
