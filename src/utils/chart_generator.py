@@ -9,7 +9,21 @@ from matplotlib import font_manager
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # Use Microsoft YaHei font for Chinese characters
 plt.rcParams['axes.unicode_minus'] = False  # Ensure minus sign is displayed correctly
 
+
+def generate_empty_image(image_path):
+    fig, ax = plt.subplots()
+    ax.text(0.5, 0.5, 'No Data Available', ha='center', va='center', fontsize=12, color='gray')
+    ax.axis('off')
+    plt.savefig(image_path)
+    plt.close(fig)
+
+
 def generate_pie_chart(transactions):
+    if not transactions:
+        image_path = os.path.join('images', 'pie_chart.png')
+        generate_empty_image(image_path)
+        return image_path
+
     income_totals = defaultdict(float)
     expense_totals = defaultdict(float)
 
@@ -89,6 +103,11 @@ def generate_line_chart(transactions):
 
 
 def generate_bar_chart(transactions):
+    if not transactions:
+        image_path = os.path.join('images', 'bar_chart.png')
+        generate_empty_image(image_path)
+        return image_path
+
     income_totals = defaultdict(float)
     expense_totals = defaultdict(float)
 
