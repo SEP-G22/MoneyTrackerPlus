@@ -89,7 +89,9 @@ class TransactionEditView(MoneyTrackerWidget):
         self.category_combo.setCurrentText(self.transaction.category.category)
 
     def submit_data(self):
-        date = self.date_edit.date().toString("yyyy-MM-dd") + " 00:00:00"
+        date = self.date_edit.date().toString("yyyy-MM-dd")
+        time = datetime.now().strftime("%H:%M:%S")
+        datetime_str = f"{date} {time}"
         amount = self.amount.text()
         description = self.description.text()
         category_name = self.category_combo.currentText()
@@ -111,7 +113,7 @@ class TransactionEditView(MoneyTrackerWidget):
                 # 新增操作
                 new_transaction = Transaction(
                     id=self.generate_new_id(),  # 假設有一個方法來生成新的ID
-                    date=datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
+                    date=datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S"),
                     amount=float(amount),
                     description=description,
                     category=category
@@ -129,7 +131,7 @@ class TransactionEditView(MoneyTrackerWidget):
                 msg_box.exec_()
             else:
                 # 修改操作
-                self.transaction.date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+                self.transaction.date = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
                 self.transaction.amount = float(amount)
                 self.transaction.description = description
                 self.transaction.category = category
