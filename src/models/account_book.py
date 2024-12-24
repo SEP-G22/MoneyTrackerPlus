@@ -64,7 +64,7 @@ class AccountBook:
         :rtype: AccountBook
         """
         account_book = cls(data['name'], data['type'])
-        for transaction_data in data['transactions']:
+        for transaction_data in data.get('transactions', []):
             transaction = Transaction.from_json(transaction_data)
             account_book.add_transaction(transaction)
         return account_book
