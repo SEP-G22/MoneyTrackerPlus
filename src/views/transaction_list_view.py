@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QDate, Qt, pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, \
-    QMessageBox, QLineEdit, QHeaderView
+    QMessageBox, QLineEdit, QHeaderView, QComboBox
+from PyQt5.QtGui import QIcon
+import re
 
 from .money_tracker_widget import MoneyTrackerWidget
 from .transaction_edit_view import TransactionEditView
@@ -19,38 +21,59 @@ class TransactionListView(MoneyTrackerWidget):
         self.data_service = DataService('local_account_books.json')
         self.transactions = []
         self.initSearchData()
+        self.setStyleSheet("""
+        QPushButton {
+            border: none;
+            background-color: #E0E0E0;
+            color: #333333;
+        }
+        QPushButton:hover {
+            background-color: #C9C9C9;
+        }
+        """)
 
     def initSearchData(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(20)
 
-        # 1. 選擇日期
+        # 1. 選擇日期範圍
         date_layout = QHBoxLayout()
-        date_layout.addWidget(QLabel("選擇日期："))
+        date_layout.addWidget(QLabel("選擇日期範圍："))
         date_layout.addStretch()
-        self.date_edit = QDateEdit()
-        self.date_edit.setCalendarPopup(True)
-        self.date_edit.setDate(QDate.currentDate())
-        date_layout.addWidget(self.date_edit)
+        self.start_date_edit = QDateEdit()
+        self.start_date_edit.setCalendarPopup(True)
+        self.start_date_edit.setDate(QDate.currentDate().addMonths(-1))
+        date_layout.addWidget(self.start_date_edit)
+        self.end_date_edit = QDateEdit()
+        self.end_date_edit.setCalendarPopup(True)
+        self.end_date_edit.setDate(QDate.currentDate())
+        date_layout.addWidget(self.end_date_edit)
         layout.addLayout(date_layout)
 
-        # 2. 顯示交易紀錄
+        # 2. 查詢描述
+        search_layout = QHBoxLayout()
+        search_layout.addWidget(QLabel("查詢描述："))
+        search_layout.addStretch()
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("請輸入描述查詢")
+        search_layout.addWidget(self.search_input)
+        layout.addLayout(search_layout)
+
+        # 3. 顯示交易紀錄
         self.transaction_table = QTableWidget()
-        self.transaction_table.setColumnCount(3)
-        self.transaction_table.setHorizontalHeaderLabels(["日期", "金額", "備註"])
+        self.transaction_table.setColumnCount(4)
+        self.transaction_table.setHorizontalHeaderLabels(["日期", "金額", "備註", "分類"])
         self.transaction_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.transaction_table.cellDoubleClicked.connect(self.edit_transaction)
         layout.addWidget(self.transaction_table)
 
-        # 3. 分頁按鈕
+        # 4. 分頁按鈕
         pagination_layout = QHBoxLayout()
         self.first_button = QPushButton("第一頁")
-        self.first_button.setObjectName("cancelButton")
         self.first_button.clicked.connect(self.first_page)
         pagination_layout.addWidget(self.first_button)
 
         self.prev_button = QPushButton("上一頁")
-        self.prev_button.setObjectName("cancelButton")
         self.prev_button.clicked.connect(self.prev_page)
         pagination_layout.addWidget(self.prev_button)
 
@@ -68,16 +91,26 @@ class TransactionListView(MoneyTrackerWidget):
         pagination_layout.addStretch()
 
         self.next_button = QPushButton("下一頁")
-        self.next_button.setObjectName("cancelButton")
         self.next_button.clicked.connect(self.next_page)
         pagination_layout.addWidget(self.next_button)
 
         self.last_button = QPushButton("最後頁")
-        self.last_button.setObjectName("cancelButton")
         self.last_button.clicked.connect(self.last_page)
         pagination_layout.addWidget(self.last_button)
 
         layout.addLayout(pagination_layout)
+
+        # 5. 查詢和重設按鈕
+        action_layout = QHBoxLayout()
+        self.search_button = QPushButton("查詢")
+        self.search_button.clicked.connect(self.load_transactions)
+        action_layout.addWidget(self.search_button)
+
+        self.reset_button = QPushButton("重設")
+        self.reset_button.clicked.connect(self.reset_filters)
+        action_layout.addWidget(self.reset_button)
+
+        layout.addLayout(action_layout)
 
         self.setLayout(layout)
         self.load_transactions()
@@ -92,6 +125,17 @@ class TransactionListView(MoneyTrackerWidget):
         if not account_book:
             return
         self.transactions = account_book.transactions  # Populate the transactions attribute
+
+        # Filter by date range
+        start_date = self.start_date_edit.date().toPyDate()
+        end_date = self.end_date_edit.date().toPyDate()
+        self.transactions = [t for t in self.transactions if start_date <= t.date.date() <= end_date]
+
+        # Filter by description regex
+        search_text = self.search_input.text()
+        if search_text:
+            self.transactions = [t for t in self.transactions if re.search(search_text, t.description)]
+
         self.transactions.sort(key=lambda x: x.date, reverse=True)
         start = self.current_page * self.transactions_per_page
         end = start + self.transactions_per_page
@@ -112,6 +156,9 @@ class TransactionListView(MoneyTrackerWidget):
             self.transaction_table.setItem(row, 0, QTableWidgetItem(transaction.date.strftime("%Y-%m-%d %H:%M:%S")))
             self.transaction_table.setItem(row, 1, QTableWidgetItem(str(transaction.amount)))
             self.transaction_table.setItem(row, 2, QTableWidgetItem(transaction.description))
+            category_item = QTableWidgetItem(transaction.category.category)
+            category_item.setIcon(QIcon(transaction.category.getIconPath()))
+            self.transaction_table.setItem(row, 3, category_item)
 
     def first_page(self):
         self.current_page = 0
@@ -180,6 +227,12 @@ class TransactionListView(MoneyTrackerWidget):
                 self.data_service.write_transactions(account_book_name, account_book.transactions)
             else:  # 雲端帳本
                 self.cloud_service.upload_account_book(account_book)
+
+    def reset_filters(self):
+        self.start_date_edit.setDate(QDate.currentDate().addMonths(-1))
+        self.end_date_edit.setDate(QDate.currentDate())
+        self.search_input.clear()
+        self.load_transactions()
 
     @classmethod
     def getIconPath(cls):
