@@ -1,10 +1,11 @@
 import os
 from datetime import datetime, timedelta
+from collections import defaultdict
+
 import matplotlib.pyplot as plt
 import numpy as np
-from collections import defaultdict
+
 from models import *
-from matplotlib import font_manager
 
 # Set the font to a Chinese font
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # Use Microsoft YaHei font for Chinese characters

@@ -1,4 +1,4 @@
-from models.transaction import TransactionCategory 
+from models import *
 
 
 perdifinedCategories = {

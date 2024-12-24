@@ -1,7 +1,6 @@
 import sys
 import logging
 import traceback
-import traceback
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QFont

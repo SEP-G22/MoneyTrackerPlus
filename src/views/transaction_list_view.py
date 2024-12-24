@@ -1,8 +1,9 @@
+import re
+
 from PyQt5.QtCore import QDate, Qt, pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, \
     QMessageBox, QLineEdit, QHeaderView, QComboBox
 from PyQt5.QtGui import QIcon
-import re
 
 from .money_tracker_widget import MoneyTrackerWidget
 from .transaction_edit_view import TransactionEditView
