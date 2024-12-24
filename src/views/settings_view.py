@@ -89,6 +89,10 @@ class SettingsView(MoneyTrackerWidget):
         QMessageBox.information(self, "成功", "雲端設定已保存！")
 
     def load_account_books(self):
+        try:
+            self.accountbook_combo.currentIndexChanged.disconnect(self.display_account_book_settings)
+        except TypeError:
+            pass  # Ignore if the signal is not connected
         local_books = get_local_books()
         cloud_books = get_cloud_books()
         all_books = local_books + cloud_books
