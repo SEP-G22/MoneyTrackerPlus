@@ -71,6 +71,7 @@ class ChartView(MoneyTrackerWidget):
 
         self.chart_label = QLabel()
         layout.addWidget(self.chart_label)
+        self.submit_button.click()
 
     def load_account_books(self):
         local_books = get_local_books()
