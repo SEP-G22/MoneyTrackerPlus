@@ -43,6 +43,22 @@ class DataService:
         with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump([account_book.to_dict() for account_book in account_books], file, ensure_ascii=False, indent=4)
 
+    def write_transactions(self, account_book_name: str, transactions: List[Transaction]) -> None:
+        """
+        Write transactions to the JSON file for a specific account book.
+
+        :param account_book_name: The name of the account book.
+        :type account_book_name: str
+        :param transactions: List of transactions to write.
+        :type transactions: List[Transaction]
+        """
+        account_books = self.read_account_books()
+        for account_book in account_books:
+            if account_book.name == account_book_name:
+                account_book.transactions = transactions
+                break
+        self.write_account_books(account_books)
+
     def _dict_to_account_book(self, data: Dict[str, Any]) -> AccountBook:
         """
         Convert a dictionary to an AccountBook instance.

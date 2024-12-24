@@ -71,7 +71,7 @@ class TransactionListView(MoneyTrackerWidget):
     def display_transactions(self, transactions):
         self.transaction_table.setRowCount(len(transactions))
         for row, transaction in enumerate(transactions):
-            self.transaction_table.setItem(row, 0, QTableWidgetItem(transaction.date))
+            self.transaction_table.setItem(row, 0, QTableWidgetItem(transaction.date.strftime("%Y-%m-%d %H:%M:%S")))
             self.transaction_table.setItem(row, 1, QTableWidgetItem(str(transaction.amount)))
             self.transaction_table.setItem(row, 2, QTableWidgetItem(transaction.description))
 

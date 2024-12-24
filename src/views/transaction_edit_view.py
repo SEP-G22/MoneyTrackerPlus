@@ -7,12 +7,15 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QComboB
 from .money_tracker_widget import MoneyTrackerWidget
 from models import *
 from utils import *
+from services import *
 
 
 class TransactionEditView(MoneyTrackerWidget):
 
     def __init__(self, parent=None, transaction=None, account_book=None):
         super().__init__(parent)
+        self.data_service = DataService('local_account_books.json')
+        self.config_service = ConfigService()
         self.transaction = transaction
         if account_book is not None:
             self.account_book = account_book
@@ -81,18 +84,18 @@ class TransactionEditView(MoneyTrackerWidget):
         self.category_combo.setCurrentText(self.transaction.category.name)
 
     def submit_data(self):
-        date = self.date_edit.date().toString("yyyy-MM-dd")
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         amount = self.amount.text()
         description = self.description.text()
         category_name = self.category_combo.currentText()
         account_book_name = self.config_service.get_default_account_book()
         account_book = get_account_book(account_book_name)
 
-        if not date or not amount or not description or not account_book_name:
+        if not amount or not description or not account_book_name:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setWindowTitle("錯誤")
-            msg_box.setText("請輸入日期、金額、帳本和備註！")
+            msg_box.setText("請輸入金額、帳本和備註！")
             msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
             msg_box.exec_()
             return
@@ -103,17 +106,16 @@ class TransactionEditView(MoneyTrackerWidget):
                 # 新增操作
                 new_transaction = Transaction(
                     id=self.generate_new_id(),  # 假設有一個方法來生成新的ID
-                    date=datetime.strptime(date, "%Y-%m-%d"),
+                    date=datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
                     amount=float(amount),
                     description=description,
                     category=category
                 )
+                account_book.add_transaction(new_transaction)
                 if account_book.type == 0:  # 本地帳本
-                    local_transactions = get_local_transactions(account_book_name)
-                    local_transactions.append(new_transaction)
-                    self.data_service.write_transactions(account_book_name, local_transactions)
+                    self.data_service.write_transactions(account_book_name, account_book.transactions)
                 else:  # 雲端帳本
-                    self.cloud_service.upload_transaction(account_book_name, new_transaction)
+                    self.cloud_service.upload_account_book(account_book)
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
                 msg_box.setWindowTitle("成功")
@@ -122,25 +124,31 @@ class TransactionEditView(MoneyTrackerWidget):
                 msg_box.exec_()
             else:
                 # 修改操作
-                self.transaction.date = datetime.strptime(date, "%Y-%m-%d")
+                self.transaction.date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 self.transaction.amount = float(amount)
                 self.transaction.description = description
                 self.transaction.category = category
+                for i, t in enumerate(account_book.transactions):
+                    if t.id == self.transaction.id:
+                        local_transactions[i] = self.transaction
+                        break
                 if account_book.type == 0:  # 本地帳本
-                    local_transactions = get_local_transactions(account_book_name)
-                    for i, t in enumerate(local_transactions):
-                        if t.id == self.transaction.id:
-                            local_transactions[i] = self.transaction
-                            break
-                    self.data_service.write_transactions(account_book_name, local_transactions)
+                    self.data_service.write_transactions(account_book_name, account_book.transactions)
                 else:  # 雲端帳本
-                    self.cloud_service.update_transaction(account_book_name, self.transaction)
+                    self.cloud_service.upload_account_book(account_book)
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
                 msg_box.setWindowTitle("成功")
                 msg_box.setText("帳目修改成功！")
                 msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
                 msg_box.exec_()
+
+            # 清空填入的資訊
+            self.date_edit.setDate(QDate.currentDate())
+            self.amount.clear()
+            self.description.clear()
+            self.category_combo.setCurrentIndex(0)
+
         except Exception as e:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
