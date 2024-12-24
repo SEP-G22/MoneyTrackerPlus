@@ -14,15 +14,18 @@ MoneyTrackerPlus/
 │   │   ├── transaction_edit_view.py
 │   │   ├── transaction_list_view.py
 │   │   ├── chart_view.py
-│   │   └── settings_view.py
+│   │   ├── settings_view.py
+│   │   └── money_tracker_widget.py
 │   │
 │   ├── services/
 │   │   ├── data_service.py
+│   │   ├── config_service.py
 │   │   └── cloud_sync_service.py
 │   │
 │   ├── utils/
 │   │   ├── chart_generator.py
-│   │   └── validators.py
+│   │   ├── get_categories.py
+│   │   └── account_book_utils.py
 │   │
 │   ├── test.py
 │   └── main.py
