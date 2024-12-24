@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from PyQt5.QtCore import QDate
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QComboBox, QLineEdit, QPushButton, QMessageBox
 
 from .money_tracker_widget import MoneyTrackerWidget
@@ -60,7 +61,9 @@ class TransactionEditView(MoneyTrackerWidget):
         category_layout.addWidget(QLabel("選擇分類："))
         category_layout.addStretch()
         self.category_combo = QComboBox()
-        self.category_combo.addItems([name for name, _ in TransactionCategory.predefined_categories().items()])
+        for name, c in TransactionCategory.predefined_categories().items():
+            icon = QIcon(c.getIconPath())
+            self.category_combo.addItem(icon, name)
         category_layout.addWidget(self.category_combo)
         layout.addLayout(category_layout)
 
