@@ -1,3 +1,4 @@
 pyqt5
 firebase-admin
 matplotlib
+numpy

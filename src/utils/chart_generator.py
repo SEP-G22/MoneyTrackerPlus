@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 from collections import defaultdict
 from models import *
 from matplotlib import font_manager
@@ -85,3 +86,62 @@ def generate_line_chart(transactions):
     ax.legend()
 
     plt.show()
+
+
+def generate_bar_chart(transactions):
+    income_totals = defaultdict(float)
+    expense_totals = defaultdict(float)
+
+    for transaction in transactions:
+        if transaction.category.type == 'Income':
+            income_totals[transaction.category.category] += transaction.amount
+        elif transaction.category.type == 'Expense':
+            expense_totals[transaction.category.category] += transaction.amount
+
+    total_income = sum(income_totals.values())
+    total_expense = sum(expense_totals.values())
+
+    income_categories = list(income_totals.keys())
+    expense_categories = list(expense_totals.keys())
+    income_values = [income_totals[category] for category in income_categories]
+    expense_values = [expense_totals[category] for category in expense_categories]
+
+    fig, ax = plt.subplots(figsize=(12, 2))  # Adjusted figsize to reduce the height
+
+    # Plot income bar
+    bottom = 0
+    income_colors = plt.cm.Blues(np.linspace(0.3, 0.7, len(income_categories)))
+    for value, category, color in zip(income_values, income_categories, income_colors):
+        ax.barh('Income', value, left=bottom, label=f'{category} ({value/total_income:.1%})', color=color, height=0.4)
+        bottom += value
+
+    # Plot expense bar
+    bottom = 0
+    expense_colors = plt.cm.Reds(np.linspace(0.3, 0.7, len(expense_categories)))
+    for value, category, color in zip(expense_values, expense_categories, expense_colors):
+        ax.barh('Expense', value, left=bottom, label=f'{category} ({value/total_expense:.1%})', color=color, height=0.4)
+        bottom += value
+
+    # Add labels, title, and legend
+    ax.set_xlabel('Amount')
+    ax.set_title('Income and Expense Breakdown')
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=3)  # Adjusted legend position
+
+    # Beautify the plot
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#DDDDDD')
+    ax.xaxis.set_tick_params(width=0)
+    ax.yaxis.set_tick_params(width=0)
+    ax.xaxis.grid(True, color='#EEEEEE')
+    ax.yaxis.grid(False)
+
+    plt.tight_layout()
+
+    # Save the plot to a file
+    image_path = os.path.join('images', 'bar_chart.png')
+    plt.savefig(image_path)
+    plt.close(fig)
+
+    return image_path
