@@ -1,4 +1,5 @@
 {
     "cred_path": "",
-    "db_url": ""
+    "db_url": "",
+    "default_account_book": "2222"
 }
