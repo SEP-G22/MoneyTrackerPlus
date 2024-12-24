@@ -42,7 +42,10 @@ class MoneyTrackerPlusView(QWidget):
         # 创建右侧的内容区域
         self.content_stack = QStackedWidget()
         for it in self.items:
-            self.content_stack.addWidget(it(self))
+            widget = it(self)
+            self.content_stack.addWidget(widget)
+            if isinstance(widget, TransactionListView):
+                widget.switch_view.connect(self.display_content)
 
         # 设置主布局
         self.layout = QHBoxLayout(self)
@@ -116,5 +119,8 @@ class MoneyTrackerPlusView(QWidget):
 
     def display_content(self, index):
         self.content_stack.setCurrentIndex(index)
+        self.category_list.setCurrentRow(index)
+        if index == 0:
+            self.content_stack.currentWidget().load_transaction_data()
         if index == 1:
             self.content_stack.currentWidget().load_transactions()

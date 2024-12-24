@@ -71,7 +71,7 @@ class TransactionEditView(MoneyTrackerWidget):
         button_layout = QHBoxLayout()
         button_layout.addWidget(QLabel(""))
         button_layout.addStretch()
-        self.submit_button = QPushButton("確定新增")
+        self.submit_button = QPushButton("確定新增/修改")
         self.submit_button.setObjectName("applyButton")
         button_layout.addWidget(self.submit_button)
         self.submit_button.clicked.connect(self.submit_data)
@@ -81,10 +81,13 @@ class TransactionEditView(MoneyTrackerWidget):
             self.load_transaction_data()
 
     def load_transaction_data(self):
-        self.date_edit.setDate(QDate.fromString(self.transaction.date, "yyyy-MM-dd"))
+        if self.transaction is None:
+            return
+        date_str = self.transaction.date.strftime("%Y-%m-%d")
+        self.date_edit.setDate(QDate.fromString(date_str, "yyyy-MM-dd"))
         self.amount.setText(str(self.transaction.amount))
         self.description.setText(self.transaction.description)
-        self.category_combo.setCurrentText(self.transaction.category.name)
+        self.category_combo.setCurrentText(self.transaction.category.category)
 
     def submit_data(self):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -133,12 +136,13 @@ class TransactionEditView(MoneyTrackerWidget):
                 self.transaction.category = category
                 for i, t in enumerate(account_book.transactions):
                     if t.id == self.transaction.id:
-                        local_transactions[i] = self.transaction
+                        account_book.transactions[i] = self.transaction
                         break
                 if account_book.type == 0:  # 本地帳本
                     self.data_service.write_transactions(account_book_name, account_book.transactions)
                 else:  # 雲端帳本
                     self.cloud_service.upload_account_book(account_book)
+                self.transaction = None
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
                 msg_box.setWindowTitle("成功")

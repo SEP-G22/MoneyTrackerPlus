@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtCore import QDate, Qt, pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, \
     QMessageBox, QLineEdit
 
@@ -9,6 +9,7 @@ from utils import *
 
 
 class TransactionListView(MoneyTrackerWidget):
+    switch_view = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -16,6 +17,7 @@ class TransactionListView(MoneyTrackerWidget):
         self.transactions_per_page = 50
         self.config_service = ConfigService()
         self.data_service = DataService('local_account_books.json')
+        self.transactions = []
         self.initSearchData()
 
     def initSearchData(self):
@@ -80,32 +82,28 @@ class TransactionListView(MoneyTrackerWidget):
         self.load_transactions()
 
     def load_transactions(self):
-        # 取得當前選擇/預設的帳本名稱
         account_book_name = self.config_service.get_default_account_book()
         if not account_book_name:
             return
 
-        # 讀取交易紀錄
         account_books = self.data_service.read_account_books()
         account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
         if not account_book:
             return
-        transactions = account_book.transactions
-        transactions.sort(key=lambda x: x.date, reverse=True)
+        self.transactions = account_book.transactions  # Populate the transactions attribute
+        self.transactions.sort(key=lambda x: x.date, reverse=True)
         start = self.current_page * self.transactions_per_page
         end = start + self.transactions_per_page
-        self.display_transactions(transactions[start:end])
+        self.display_transactions(self.transactions[start:end])
 
-        # 更新頁數顯示
         self.page_label.setText(
-            f"/ {max(1, (len(transactions) + self.transactions_per_page - 1) // self.transactions_per_page)}")
+            f"/ {max(1, (len(self.transactions) + self.transactions_per_page - 1) // self.transactions_per_page)}")
         self.page_input.setText(str(self.current_page + 1))
 
-        # 更新按鈕狀態
         self.prev_button.setEnabled(self.current_page > 0)
-        self.next_button.setEnabled(end < len(transactions))
+        self.next_button.setEnabled(end < len(self.transactions))
         self.first_button.setEnabled(self.current_page > 0)
-        self.last_button.setEnabled(end < len(transactions))
+        self.last_button.setEnabled(end < len(self.transactions))
 
     def display_transactions(self, transactions):
         self.transaction_table.setRowCount(len(transactions))
@@ -156,7 +154,10 @@ class TransactionListView(MoneyTrackerWidget):
 
     def edit_transaction(self, row, column):
         transaction = self.transactions[row]
-        self.parent().setCurrentWidget(TransactionEditView(transaction=transaction))
+        edit_view = self.parent().findChild(TransactionEditView)
+        edit_view.transaction = transaction
+        edit_view.load_transaction_data()
+        self.switch_view.emit(0)
 
     @classmethod
     def getIconPath(cls):
