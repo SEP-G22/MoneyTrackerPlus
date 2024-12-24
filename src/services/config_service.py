@@ -39,6 +39,7 @@ class ConfigService:
         self.save_config()
 
     def get_db_url(self):
+        self.reload()
         return self.config_data.get('db_url', '')
 
     def set_db_url(self, db_url):
