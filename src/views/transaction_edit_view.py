@@ -13,15 +13,11 @@ from services import *
 
 class TransactionEditView(MoneyTrackerWidget):
 
-    def __init__(self, parent=None, transaction=None, account_book=None):
+    def __init__(self, parent=None, transaction=None):
         super().__init__(parent)
         self.data_service = DataService('local_account_books.json')
         self.config_service = ConfigService()
         self.transaction = transaction
-        if account_book is not None:
-            self.account_book = account_book
-        else:
-            self.account_book = get_account_book(self.config_service.get_default_account_book())
         self.initAddData()
 
     def initAddData(self):
