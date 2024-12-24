@@ -31,11 +31,15 @@ class SettingsView(MoneyTrackerWidget):
         cloud_settings_layout.addRow(save_cloud_settings_button)
         layout.addLayout(cloud_settings_layout)
 
-        # 2. 帳本選擇 ComboBox
+        # 2. 帳本選擇
+        combo_layout = QHBoxLayout()
+        accountbook_combo_label = QLabel("選擇帳本：")
         self.accountbook_combo = QComboBox()
         self.accountbook_name_input = QLineEdit()
         self.load_account_books()
-        layout.addWidget(self.accountbook_combo)
+        combo_layout.addWidget(accountbook_combo_label)
+        combo_layout.addWidget(self.accountbook_combo)
+        layout.addLayout(combo_layout)
 
         # 3. 新增帳本
         name_layout = QHBoxLayout()

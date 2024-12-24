@@ -72,6 +72,7 @@ class TransactionEditView(MoneyTrackerWidget):
         button_layout.addWidget(self.submit_button)
         self.submit_button.clicked.connect(self.submit_data)
         layout.addLayout(button_layout)
+        layout.addStretch()
 
         if self.transaction:
             self.load_transaction_data()
