@@ -159,6 +159,27 @@ class TransactionListView(MoneyTrackerWidget):
         edit_view.load_transaction_data()
         self.switch_view.emit(0)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            selected_row = self.transaction_table.currentRow()
+            if selected_row >= 0:
+                transaction = self.transactions[selected_row]
+                self.delete_transaction(transaction)
+                self.load_transactions()
+        else:
+            super().keyPressEvent(event)
+
+    def delete_transaction(self, transaction):
+        account_book_name = self.config_service.get_default_account_book()
+        account_books = self.data_service.read_account_books()
+        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        if account_book:
+            account_book.transactions = [t for t in account_book.transactions if t.id != transaction.id]
+            if account_book.type == 0:  # 本地帳本
+                self.data_service.write_transactions(account_book_name, account_book.transactions)
+            else:  # 雲端帳本
+                self.cloud_service.upload_account_book(account_book)
+
     @classmethod
     def getIconPath(cls):
         return "./images/bar-chart.png"
