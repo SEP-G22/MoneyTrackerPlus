@@ -92,6 +92,8 @@ class ChartView(MoneyTrackerWidget):
     def display_plot(self):
         accountbook_name = self.config_service.get_default_account_book()
         accountbook = get_account_book(accountbook_name)
+        if not accountbook:
+            return
         transactions = self.get_transactions(accountbook, self.date_start_edit.date().toPyDate(),
                                              self.date_end_edit.date().toPyDate())
         chart_type = self.chart_combo.currentText()
