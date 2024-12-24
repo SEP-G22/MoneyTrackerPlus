@@ -1,9 +1,11 @@
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, \
+    QMessageBox, QLineEdit
 
 from .money_tracker_widget import MoneyTrackerWidget
 from .transaction_edit_view import TransactionEditView
 from services import *
+from utils import *
 
 
 class TransactionListView(MoneyTrackerWidget):
@@ -39,13 +41,39 @@ class TransactionListView(MoneyTrackerWidget):
 
         # 3. 分頁按鈕
         pagination_layout = QHBoxLayout()
+        self.first_button = QPushButton("第一頁")
+        self.first_button.setObjectName("cancelButton")
+        self.first_button.clicked.connect(self.first_page)
+        pagination_layout.addWidget(self.first_button)
+
         self.prev_button = QPushButton("上一頁")
+        self.prev_button.setObjectName("cancelButton")
         self.prev_button.clicked.connect(self.prev_page)
         pagination_layout.addWidget(self.prev_button)
+
         pagination_layout.addStretch()
+
+        self.page_input = QLineEdit()
+        self.page_input.setFixedWidth(30)
+        self.page_input.setText(str(self.current_page + 1))
+        self.page_input.returnPressed.connect(self.go_to_page)
+        pagination_layout.addWidget(self.page_input)
+
+        self.page_label = QLabel()
+        pagination_layout.addWidget(self.page_label)
+
+        pagination_layout.addStretch()
+
         self.next_button = QPushButton("下一頁")
+        self.next_button.setObjectName("cancelButton")
         self.next_button.clicked.connect(self.next_page)
         pagination_layout.addWidget(self.next_button)
+
+        self.last_button = QPushButton("最後頁")
+        self.last_button.setObjectName("cancelButton")
+        self.last_button.clicked.connect(self.last_page)
+        pagination_layout.addWidget(self.last_button)
+
         layout.addLayout(pagination_layout)
 
         self.setLayout(layout)
@@ -68,6 +96,17 @@ class TransactionListView(MoneyTrackerWidget):
         end = start + self.transactions_per_page
         self.display_transactions(transactions[start:end])
 
+        # 更新頁數顯示
+        self.page_label.setText(
+            f"/ {max(1, (len(transactions) + self.transactions_per_page - 1) // self.transactions_per_page)}")
+        self.page_input.setText(str(self.current_page + 1))
+
+        # 更新按鈕狀態
+        self.prev_button.setEnabled(self.current_page > 0)
+        self.next_button.setEnabled(end < len(transactions))
+        self.first_button.setEnabled(self.current_page > 0)
+        self.last_button.setEnabled(end < len(transactions))
+
     def display_transactions(self, transactions):
         self.transaction_table.setRowCount(len(transactions))
         for row, transaction in enumerate(transactions):
@@ -75,14 +114,45 @@ class TransactionListView(MoneyTrackerWidget):
             self.transaction_table.setItem(row, 1, QTableWidgetItem(str(transaction.amount)))
             self.transaction_table.setItem(row, 2, QTableWidgetItem(transaction.description))
 
+    def first_page(self):
+        self.current_page = 0
+        self.load_transactions()
+
+    def last_page(self):
+        account_book_name = self.config_service.get_default_account_book()
+        account_books = self.data_service.read_account_books()
+        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        transactions = account_book.transactions
+        self.current_page = (len(transactions) - 1) // self.transactions_per_page
+        self.load_transactions()
+
     def prev_page(self):
         if self.current_page > 0:
             self.current_page -= 1
             self.load_transactions()
 
     def next_page(self):
-        self.current_page += 1
-        self.load_transactions()
+        account_book_name = self.config_service.get_default_account_book()
+        account_books = self.data_service.read_account_books()
+        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        transactions = account_book.transactions
+        if (self.current_page + 1) * self.transactions_per_page < len(transactions):
+            self.current_page += 1
+            self.load_transactions()
+
+    def go_to_page(self):
+        try:
+            account_book_name = self.config_service.get_default_account_book()
+            account_book = get_account_book(account_book_name)
+            page = int(self.page_input.text()) - 1
+            max_page = (len(account_book.transactions) - 1) // self.transactions_per_page
+            if 0 <= page <= max_page:
+                self.current_page = page
+                self.load_transactions()
+        except ValueError:
+            pass
+        finally:
+            self.page_input.setText(str(self.current_page + 1))
 
     def edit_transaction(self, row, column):
         transaction = self.transactions[row]

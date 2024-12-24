@@ -116,3 +116,5 @@ class MoneyTrackerPlusView(QWidget):
 
     def display_content(self, index):
         self.content_stack.setCurrentIndex(index)
+        if index == 1:
+            self.content_stack.currentWidget().load_transactions()
