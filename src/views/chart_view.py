@@ -21,15 +21,6 @@ class ChartView(MoneyTrackerWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(20)
 
-        # 1. 帳本選擇 ComboBox
-        select_accountbook_layout = QHBoxLayout()
-        select_accountbook_layout.addWidget(QLabel("選擇帳本："))
-        select_accountbook_layout.addStretch()
-        self.accountbook_combo = QComboBox()
-        self.accountbook_name_input = QLineEdit()
-        self.load_account_books()
-        select_accountbook_layout.addWidget(self.accountbook_combo)
-        layout.addLayout(select_accountbook_layout)
         # 2. 選擇起始日期
         date_start_layout = QHBoxLayout()
         date_start_layout.addWidget(QLabel("選擇起始日期："))
@@ -99,7 +90,8 @@ class ChartView(MoneyTrackerWidget):
         return transactions
 
     def display_plot(self):
-        accountbook = get_account_book(self.accountbook_combo.currentText())
+        accountbook_name = self.config_service.get_default_account_book()
+        accountbook = get_account_book(accountbook_name)
         transactions = self.get_transactions(accountbook, self.date_start_edit.date().toPyDate(),
                                              self.date_end_edit.date().toPyDate())
         chart_type = self.chart_combo.currentText()
