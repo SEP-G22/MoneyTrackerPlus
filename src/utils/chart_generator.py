@@ -1,3 +1,6 @@
+# Description: This module contains functions to generate pie, line, and bar charts for the dashboard.
+# implemented by 林楷傑
+
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -13,6 +16,12 @@ plt.rcParams['axes.unicode_minus'] = False  # Ensure minus sign is displayed cor
 
 
 def generate_empty_image(image_path):
+    """
+    Generate an empty image with a 'No Data Available' message.
+
+    :param image_path: Path to save the generated image.
+    :type image_path: str
+    """
     fig, ax = plt.subplots()
     ax.text(0.5, 0.5, 'No Data Available', ha='center', va='center', fontsize=12, color='gray')
     ax.axis('off')
@@ -21,6 +30,14 @@ def generate_empty_image(image_path):
 
 
 def generate_pie_chart(transactions):
+    """
+    Generate a pie chart for the given transactions.
+
+    :param transactions: List of transactions to be visualized.
+    :type transactions: List[Transaction]
+    :return: Path to the generated pie chart image.
+    :rtype: str
+    """
     if not transactions:
         image_path = os.path.join('images', 'pie_chart.png')
         generate_empty_image(image_path)
@@ -79,10 +96,19 @@ def generate_pie_chart(transactions):
 
 
 def generate_line_chart(transactions):
+    """
+    Generate a line chart for the given transactions.
+
+    :param transactions: List of transactions to be visualized.
+    :type transactions: List[Transaction]
+    :return: Path to the generated line chart image.
+    :rtype: str
+    """
     if not transactions:
         image_path = os.path.join('images', 'line_chart.png')
         generate_empty_image(image_path)
         return image_path
+
     # Initialize dictionaries to store income and expense totals by week
     weekly_income = defaultdict(float)
     weekly_expense = defaultdict(float)
@@ -129,6 +155,14 @@ def generate_line_chart(transactions):
 
 
 def generate_bar_chart(transactions):
+    """
+    Generate a bar chart for the given transactions.
+
+    :param transactions: List of transactions to be visualized.
+    :type transactions: List[Transaction]
+    :return: Path to the generated bar chart image.
+    :rtype: str
+    """
     if not transactions:
         image_path = os.path.join('images', 'bar_chart.png')
         generate_empty_image(image_path)

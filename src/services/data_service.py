@@ -1,4 +1,5 @@
-# src/services/data_service.py
+# This file contains the DataService class that is responsible for reading and writing account books to a local JSON file.
+# Implemented by 李崑銘
 
 import json
 import os

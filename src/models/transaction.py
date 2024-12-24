@@ -1,4 +1,5 @@
-# src/models/transaction.py
+# This file is a model file, which is responsible for defining the data structure of a transaction and a transaction category.
+# Implemented by 蔡淵丞
 
 from typing import Dict, Any
 from datetime import datetime

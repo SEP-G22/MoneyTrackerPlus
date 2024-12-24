@@ -1,3 +1,4 @@
+# Implemented by 李崑銘 & 陳衍廷
 from typing import Type, Final
 
 from PyQt5.QtGui import QIcon

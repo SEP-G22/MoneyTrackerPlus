@@ -1,4 +1,5 @@
-# src/services/cloud_sync_service.py
+# This file contains the implementation of the CloudSyncService class.
+# Implemented by 李崑銘
 
 import firebase_admin
 from firebase_admin import credentials, db, _apps
