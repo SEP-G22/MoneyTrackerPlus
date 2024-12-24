@@ -19,6 +19,7 @@ class TransactionListView(MoneyTrackerWidget):
         self.transactions_per_page = 50
         self.config_service = ConfigService()
         self.data_service = DataService('local_account_books.json')
+        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(), self.config_service.get_db_url())
         self.transactions = []
         self.initSearchData()
         self.setStyleSheet("""
@@ -120,8 +121,7 @@ class TransactionListView(MoneyTrackerWidget):
         if not account_book_name:
             return
 
-        account_books = self.data_service.read_account_books()
-        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        account_book = get_account_book(account_book_name)
         if not account_book:
             return
         self.transactions = account_book.transactions  # Populate the transactions attribute
@@ -166,8 +166,7 @@ class TransactionListView(MoneyTrackerWidget):
 
     def last_page(self):
         account_book_name = self.config_service.get_default_account_book()
-        account_books = self.data_service.read_account_books()
-        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        account_book = get_account_book(account_book_name)
         transactions = account_book.transactions
         self.current_page = (len(transactions) - 1) // self.transactions_per_page
         self.load_transactions()
@@ -179,8 +178,7 @@ class TransactionListView(MoneyTrackerWidget):
 
     def next_page(self):
         account_book_name = self.config_service.get_default_account_book()
-        account_books = self.data_service.read_account_books()
-        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        account_book = get_account_book(account_book_name)
         transactions = account_book.transactions
         if (self.current_page + 1) * self.transactions_per_page < len(transactions):
             self.current_page += 1
@@ -219,8 +217,7 @@ class TransactionListView(MoneyTrackerWidget):
 
     def delete_transaction(self, transaction):
         account_book_name = self.config_service.get_default_account_book()
-        account_books = self.data_service.read_account_books()
-        account_book = next((ab for ab in account_books if ab.name == account_book_name), None)
+        account_book = get_account_book(account_book_name)
         if account_book:
             account_book.transactions = [t for t in account_book.transactions if t.id != transaction.id]
             if account_book.type == 0:  # 本地帳本

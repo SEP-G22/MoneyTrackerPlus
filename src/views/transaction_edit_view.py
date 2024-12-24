@@ -17,6 +17,8 @@ class TransactionEditView(MoneyTrackerWidget):
         super().__init__(parent)
         self.data_service = DataService('local_account_books.json')
         self.config_service = ConfigService()
+        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(),
+                                              self.config_service.get_db_url())
         self.transaction = transaction
         self.initAddData()
 
