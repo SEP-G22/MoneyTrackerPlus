@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QDate, Qt, pyqtSignal
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QDateEdit, QPushButton, QTableWidget, QTableWidgetItem, \
-    QMessageBox, QLineEdit
+    QMessageBox, QLineEdit, QHeaderView
 
 from .money_tracker_widget import MoneyTrackerWidget
 from .transaction_edit_view import TransactionEditView
@@ -38,6 +38,7 @@ class TransactionListView(MoneyTrackerWidget):
         self.transaction_table = QTableWidget()
         self.transaction_table.setColumnCount(3)
         self.transaction_table.setHorizontalHeaderLabels(["日期", "金額", "備註"])
+        self.transaction_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.transaction_table.cellDoubleClicked.connect(self.edit_transaction)
         layout.addWidget(self.transaction_table)
 

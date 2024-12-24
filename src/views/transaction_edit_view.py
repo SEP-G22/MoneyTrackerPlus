@@ -156,6 +156,13 @@ class TransactionEditView(MoneyTrackerWidget):
             self.description.clear()
             self.category_combo.setCurrentIndex(0)
 
+        except ValueError:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("錯誤")
+            msg_box.setText("金額格式錯誤，請重新輸入！")
+            msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
+            msg_box.exec_()
         except Exception as e:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
