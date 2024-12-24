@@ -68,6 +68,14 @@ class SettingsView(MoneyTrackerWidget):
         layout.addLayout(self.accountbook_settings_layout)
 
         self.setLayout(layout)
+        self.set_default_account_book()
+
+    def set_default_account_book(self):
+        default_book = self.config_service.get_default_account_book()
+        if default_book:
+            index = self.accountbook_combo.findText(default_book)
+            if index != -1:
+                self.accountbook_combo.setCurrentIndex(index)
 
     def save_cloud_settings(self):
         cred_path = self.cred_path_input.text().strip()
@@ -77,65 +85,106 @@ class SettingsView(MoneyTrackerWidget):
         QMessageBox.information(self, "成功", "雲端設定已保存！")
 
     def load_account_books(self):
-        local_books = self.data_service.read_account_books()
-        cloud_books = self.cloud_service.download_account_books()
+        local_books = get_local_books()
+        cloud_books = get_cloud_books()
         all_books = local_books + cloud_books
         self.accountbook_combo.clear()
         self.accountbook_combo.addItems([b.name for b in all_books])
         self.accountbook_combo.currentIndexChanged.connect(self.display_account_book_settings)
+        self.set_default_account_book()
 
     def add_local_account_book(self):
         accountbook_name = self.name_input.text().strip()
-        if accountbook_name:
-            try:
-                if any(b.name == accountbook_name for b in self.data_service.read_account_books()):
-                    QMessageBox.warning(self, "錯誤", f"本地帳本 '{accountbook_name}' 已存在！")
-                else:
-                    new_book = AccountBook(name=accountbook_name)
-                    self.data_service.write_account_books(self.data_service.read_account_books() + [new_book])
-                    QMessageBox.information(self, "成功", f"本地帳本 '{accountbook_name}' 新增成功！")
-                    self.load_account_books()
-                    self.accountbook_combo.setCurrentText(accountbook_name)  # 選擇剛新增的帳本
-                    self.name_input.clear()  # 清空輸入框
-            except Exception as e:
-                QMessageBox.warning(self, "錯誤", f"新增本地帳本 '{accountbook_name}' 失敗！")
-                print(e)
-        else:
+        if not accountbook_name:
             QMessageBox.warning(self, "錯誤", "請輸入帳本名稱！")
+            return
+        try:
+            if any(b.name == accountbook_name for b in get_local_books()):
+                QMessageBox.warning(self, "錯誤", f"本地帳本 '{accountbook_name}' 已存在！")
+            else:
+                new_book = AccountBook(accountbook_name, 0)
+                self.data_service.write_account_books(get_local_books() + [new_book])
+                QMessageBox.information(self, "成功", f"本地帳本 '{accountbook_name}' 新增成功！")
+                self.load_account_books()
+                self.accountbook_combo.setCurrentText(accountbook_name)
+        except Exception as e:
+            QMessageBox.warning(self, "錯誤", f"新增本地帳本 '{accountbook_name}' 失敗！")
+            print(e)
 
     def add_cloud_account_book(self):  # Not test yet
         accountbook_name = self.name_input.text().strip()
-        if accountbook_name:
-            new_book = AccountBook(name=accountbook_name)
-            self.cloud_service.upload_account_book(new_book)
-            QMessageBox.information(self, "成功", f"雲端帳本 '{accountbook_name}' 新增成功！")
-            self.load_account_books()
-            self.accountbook_combo.setCurrentText(accountbook_name)
-            self.name_input.clear()
-        else:
+        if not accountbook_name:
             QMessageBox.warning(self, "錯誤", "請輸入帳本名稱！")
+            return
+        try:
+            if any(b.name == accountbook_name for b in get_cloud_books()):
+                QMessageBox.warning(self, "錯誤", f"雲端帳本 '{accountbook_name}' 已存在！")
+            if self.config_service.get_db_url() == '' or self.config_service.get_cred_path() == '':
+                QMessageBox.warning(self, "錯誤", "請先設定雲端帳本！")
+            else:
+                new_book = AccountBook(accountbook_name, 1)
+                self.cloud_service.upload_account_book(new_book)
+                QMessageBox.information(self, "成功", f"雲端帳本 '{accountbook_name}' 新增成功！")
+                self.load_account_books()
+                self.accountbook_combo.setCurrentText(accountbook_name)
+        except Exception as e:
+            QMessageBox.warning(self, "錯誤", f"新增雲端帳本 '{accountbook_name}' 失敗！")
+            print(e)
 
     def display_account_book_settings(self):
         selected_book = self.accountbook_combo.currentText()
         self.accountbook_name_input.setText(selected_book)
+        self.config_service.set_default_account_book(selected_book)
 
-    def rename_account_book(self):  # Not finish yet
+    def rename_account_book(self):
         current_name = self.accountbook_combo.currentText()
         new_name = self.accountbook_name_input.text().strip()
-        if new_name and current_name != new_name:
-            # Implement renaming logic here
-            QMessageBox.information(self, "成功", f"帳本名稱已更改為 '{new_name}'")
+        if not new_name or current_name == new_name:
+            QMessageBox.warning(self, "錯誤", "請輸入新的帳本名稱！")
+            return
+        try:
+            account_book = get_account_book(current_name)
+            if account_book.type == 0:  # local account book
+                if any(b.name == new_name for b in get_local_books()):
+                    QMessageBox.warning(self, "錯誤", f"本地帳本 '{new_name}' 已存在！")
+                    return
+                local_books = get_local_books()
+                for b in local_books:
+                    if b.name == current_name: b.name = new_name
+                self.data_service.write_account_books(local_books)
+            else:  # cloud account book
+                if any(b.name == new_name for b in get_cloud_books()):
+                    QMessageBox.warning(self, "錯誤", f"雲端帳本 '{new_name}' 已存在！")
+                    return
+                self.cloud_service.delete_account_book(current_name)
+                account_book.name = new_name
+                self.cloud_service.upload_account_book(account_book)
+            QMessageBox.information(self, "成功", f"帳本 '{current_name}' 已更名為 '{new_name}'")
             self.load_account_books()
             self.accountbook_combo.setCurrentText(new_name)
-        else:
-            QMessageBox.warning(self, "錯誤", "請輸入新的帳本名稱！")
+        except Exception as e:
+            QMessageBox.warning(self, "錯誤", f"更名帳本 '{current_name}' 失敗！")
+            print(e)
 
     def delete_account_book(self):
         current_name = self.accountbook_combo.currentText()
-        # Implement deletion logic here
-        self.data_service.write_account_books([b for b in self.data_service.read_account_books() if b.name != current_name])
-        QMessageBox.information(self, "成功", f"帳本 '{current_name}' 已刪除")
-        self.load_account_books()
+        account_book = get_account_book(current_name)
+        if not account_book:
+            QMessageBox.warning(self, "錯誤", f"找不到帳本 '{current_name}'！")
+            return
+        try:
+            if account_book.type == 0:  # local account book
+                local_books = get_local_books()
+                local_books = [b for b in local_books if b.name != current_name]
+                self.data_service.write_account_books(local_books)
+            else:  # cloud account book
+                self.cloud_service.delete_account_book(current_name)
+            QMessageBox.information(self, "成功", f"帳本 '{current_name}' 已刪除！")
+            self.load_account_books()
+            self.set_default_account_book()
+        except Exception as e:
+            QMessageBox.warning(self, "錯誤", f"刪除帳本 '{current_name}' 失敗！")
+            print(e)
 
     @classmethod
     def getIconPath(cls):

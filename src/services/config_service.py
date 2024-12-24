@@ -1,6 +1,8 @@
 import json
 import os
 
+from .data_service import DataService
+
 class ConfigService:
     def __init__(self, config_file='config.json'):
         self.config_file = config_file
@@ -38,4 +40,11 @@ class ConfigService:
 
     def set_db_url(self, db_url):
         self.config_data['db_url'] = db_url
+        self.save_config()
+
+    def get_default_account_book(self) -> str:
+        return self.config_data.get('default_account_book', '')
+
+    def set_default_account_book(self, account_book_name):
+        self.config_data['default_account_book'] = account_book_name
         self.save_config()

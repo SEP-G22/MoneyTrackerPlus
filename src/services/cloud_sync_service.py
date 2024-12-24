@@ -4,7 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, db, _apps
 from typing import List, Dict, Any
 
-from models import *
+from models import AccountBook
 
 
 class CloudSyncService:
@@ -20,6 +20,9 @@ class CloudSyncService:
         :param db_url: URL of the Firebase Realtime Database.
         :type db_url: str
         """
+        if cred_path == '' or db_url == '':
+            self.db_ref = None
+            return
         if not _apps:
             cred = credentials.Certificate(cred_path)
             firebase_admin.initialize_app(cred, {'databaseURL': db_url})
@@ -32,8 +35,22 @@ class CloudSyncService:
         :param account_book: The account book to upload.
         :type account_book: AccountBook
         """
+        if not self.db_ref:
+            return
         account_book_ref = self.db_ref.child('account_books').child(account_book.name)
         account_book_ref.set(account_book.to_dict())
+
+    def upload_account_books(self, account_books: List[AccountBook]) -> None:
+        """
+        Upload multiple account books to Firebase Realtime Database.
+
+        :param account_books: List of account books to upload.
+        :type account_books: List[AccountBook]
+        """
+        if not self.db_ref:
+            return
+        for account_book in account_books:
+            self.upload_account_book(account_book)
 
     def download_account_books(self) -> List[AccountBook]:
         """
@@ -42,10 +59,24 @@ class CloudSyncService:
         :return: List of account books.
         :rtype: List[AccountBook]
         """
+        if not self.db_ref:
+            return []
         account_books_data = self.db_ref.child('account_books').get()
         if not account_books_data:
             return []
         return [self._dict_to_account_book(data) for data in account_books_data.values()]
+
+    def delete_account_book(self, account_book_name: str) -> None:
+        """
+        Delete an account book from Firebase Realtime Database.
+
+        :param account_book_name: The name of the account book to delete.
+        :type account_book_name: str
+        """
+        if not self.db_ref:
+            return
+        account_book_ref = self.db_ref.child('account_books').child(account_book_name)
+        account_book_ref.delete()
 
     def _dict_to_account_book(self, data: Dict[str, Any]) -> AccountBook:
         """
@@ -57,4 +88,3 @@ class CloudSyncService:
         :rtype: AccountBook
         """
         return AccountBook.from_json(data)
-
