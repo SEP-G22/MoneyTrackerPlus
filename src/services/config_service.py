@@ -3,9 +3,13 @@ import os
 
 from .data_service import DataService
 
+
 class ConfigService:
     def __init__(self, config_file='config.json'):
         self.config_file = config_file
+        self.config_data = self.load_config()
+
+    def reload(self):
         self.config_data = self.load_config()
 
     def load_config(self):
@@ -27,6 +31,7 @@ class ConfigService:
     def save_config(self):
         with open(self.config_file, 'w') as file:
             json.dump(self.config_data, file, indent=4)
+        self.reload()
 
     def get_cred_path(self):
         return self.config_data.get('cred_path', '')
@@ -43,6 +48,7 @@ class ConfigService:
         self.save_config()
 
     def get_default_account_book(self) -> str:
+        self.reload()
         return self.config_data.get('default_account_book', '')
 
     def set_default_account_book(self, account_book_name):
