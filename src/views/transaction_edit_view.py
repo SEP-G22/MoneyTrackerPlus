@@ -87,7 +87,7 @@ class TransactionEditView(MoneyTrackerWidget):
         self.category_combo.setCurrentText(self.transaction.category.category)
 
     def submit_data(self):
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = self.date_edit.date().toString("yyyy-MM-dd") + " 00:00:00"
         amount = self.amount.text()
         description = self.description.text()
         category_name = self.category_combo.currentText()
