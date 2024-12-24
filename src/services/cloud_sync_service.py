@@ -38,7 +38,12 @@ class CloudSyncService:
         if not self.db_ref:
             return
         account_book_ref = self.db_ref.child('account_books').child(account_book.name)
-        account_book_ref.set(account_book.to_dict())
+        if account_book_ref.get() is None:
+            # Account book does not exist, create a new one
+            account_book_ref.set(account_book.to_dict())
+        else:
+            # Account book exists, update it with the current logic
+            account_book_ref.update(account_book.to_dict())
 
     def upload_account_books(self, account_books: List[AccountBook]) -> None:
         """
