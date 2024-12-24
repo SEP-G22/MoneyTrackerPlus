@@ -1,10 +1,10 @@
-import sys
+from datetime import datetime
 from PyQt5.QtCore import QDate
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QDateEdit, QHBoxLayout, QPushButton, QApplication, QComboBox, QLineEdit
 
 from .money_tracker_widget import MoneyTrackerWidget
-from utils.chart_generator import PieChartWidget
-from services import ConfigService, DataService, CloudSyncService
+from services import *
 from utils import *
 
 
@@ -60,6 +60,9 @@ class ChartView(MoneyTrackerWidget):
         self.submit_button.clicked.connect(self.display_plot)  # 綁定事件
         layout.addLayout(button_layout)
 
+        self.chart_label = QLabel()
+        layout.addWidget(self.chart_label)
+
     def load_account_books(self):
         local_books = get_local_books()
         cloud_books = get_cloud_books()
@@ -74,26 +77,23 @@ class ChartView(MoneyTrackerWidget):
             index = self.accountbook_combo.findText(default_book)
             if index != -1:
                 self.accountbook_combo.setCurrentIndex(index)
-    
+
     def get_transactions(self, accountbook, start_date, end_date):
         if start_date > end_date:
             start_date, end_date = end_date, start_date
         transactions = []
         for transaction in accountbook.transactions:
-            if transaction.date >= start_date and transaction.date <= end_date:
+            transaction_date = transaction.date.date() if isinstance(transaction.date, datetime) else transaction.date
+            if start_date <= transaction_date <= end_date:
                 transactions.append(transaction)
         return transactions
-    
-    def display_plot(self):
-        # 在這裡添加顯示圖表的邏輯
-        accountbook = get_account_book(self.accountbook_combo.currentText())
-        transactions = self.get_transactions(accountbook, self.date_start_edit.date(), self.date_end_edit.date())
-        chart_app = QApplication(sys.argv)
-        chart_window = PieChartWidget(transactions)
-        chart_window.resize(800,600)
-        chart_window.show()
-        sys.exit(chart_app.exec_())
 
+    def display_plot(self):
+        accountbook = get_account_book(self.accountbook_combo.currentText())
+        transactions = self.get_transactions(accountbook, self.date_start_edit.date().toPyDate(),
+                                             self.date_end_edit.date().toPyDate())
+        chart_image_path = generate_pie_chart(transactions)
+        self.chart_label.setPixmap(QPixmap(chart_image_path))
 
     @classmethod
     def getIconPath(cls):

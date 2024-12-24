@@ -1,91 +1,53 @@
-# 生成分析圖表
-import sys
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QWidget
-from PyQt5.QtCore import Qt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib import rc
-from models.transaction import Transaction, TransactionCategory
-# 設定中文字體為 Microsoft YaHei 或 STHeiti，這些字體在許多系統中都有安裝
-rc("font", family="Microsoft YaHei")  # 你可以替換為 "STHeiti" 或 "Arial Unicode MS"
-rc("axes", unicode_minus=False)  # 解決負號顯示問題
+import os
 
-class PieChartWidget(QWidget):
-    def __init__(self, transactions, parent=None):
-        super().__init__(parent)
-        self.transactions = transactions
-        self.initUI()
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from models import *
 
-    def initUI(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(20)
 
-        # 圓餅圖
-        self.figure = Figure(figsize=(5, 4))  # 設置更小的圖表尺寸 (寬5，高4)
-        self.canvas = FigureCanvas(self.figure)
-        layout.addWidget(self.canvas)
+def generate_pie_chart(transactions):
+    category_totals = defaultdict(float)
+    for transaction in transactions:
+        category_totals[transaction.category] += transaction.amount
 
-        # 表格顯示每個交易的收入/支出明細
-        self.table = QTableWidget()
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["日期", "分類", "金額", "備註"])
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
-        layout.addWidget(self.table)
+    labels = category_totals.keys()
+    sizes = category_totals.values()
 
-        # 設置行高
-        self.table.verticalHeader().setDefaultSectionSize(30)
-        # 設置列寬
-        self.table.horizontalHeader().setDefaultSectionSize(150)
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-        # 生成圖表按鈕
-        self.generate_button = QPushButton("生成圖表")
-        self.generate_button.clicked.connect(self.generate_chart)
-        layout.addWidget(self.generate_button, alignment=Qt.AlignRight)
+    plt.title('Transaction Categories Pie Chart')
 
-    def generate_chart(self):
-        # 解析傳入的交易數據
-        data = {"收入": 0, "支出": 0}
-        for transaction in self.transactions:
-            amount = transaction.amount
-            if amount > 0:
-                data["收入"] += amount
-            else:
-                data["支出"] += -amount
+    # Save the plot to a file
+    image_path = os.path.join('images', 'pie_chart.png')
+    plt.savefig(image_path)
+    plt.close(fig)
 
-        # 繪製圓餅圖
-        self.figure.clear()
-        ax = self.figure.add_subplot(111)
-        ax.pie(
-            [data["支出"], data["收入"]],
-            labels=["支出", "收入"],
-            autopct="%1.1f%%",
-            colors=["#FF9999", "#99CCFF"],
-            textprops={"fontsize": 14}  # 調整分類標籤字體大小
-        )
-        ax.set_title("收入與支出比例", fontsize=16)
-        self.canvas.draw()
+    return image_path
 
-        # 更新表格內容
-        self.table.setRowCount(len(self.transactions))
-        for row, transaction in enumerate(self.transactions):
-            self.table.setItem(row, 0, QTableWidgetItem(transaction.date.strftime("%Y-%m-%d %H:%M:%S")))
-            self.table.setItem(row, 1, QTableWidgetItem(transaction.category.category))
-            self.table.setItem(row, 2, QTableWidgetItem(str(transaction.amount)))
-            self.table.setItem(row, 3, QTableWidgetItem(transaction.description))
 
-if __name__ == "__main__":
-    # 測試數據
-    transactions = [
-        Transaction(1, 1000, "2023-01-01", "a", TransactionCategory("薪水", "收入")),
-        Transaction(2, -200, "2023-01-02", "b", TransactionCategory("餐費", "支出")),
-        Transaction(3, 500, "2023-01-03", "c", TransactionCategory("電費", "支出")),
-        Transaction(4, -300, "2023-01-04", "d", TransactionCategory("衣服", "支出")),
-        Transaction(5, 800, "2023-01-05", "e", TransactionCategory("獎金", "收入")),
-    ]
+def generate_line_chart(transactions):
+    income_totals = defaultdict(float)
+    expense_totals = defaultdict(float)
 
-    app = QApplication(sys.argv)
-    window = PieChartWidget(transactions)
-    window.resize(800,600)
-    window.show()
-    sys.exit(app.exec_())
+    for transaction in transactions:
+        if transaction.type == 'income':
+            income_totals[transaction.date] += transaction.amount
+        elif transaction.type == 'expense':
+            expense_totals[transaction.date] += transaction.amount
+
+    dates = sorted(set(income_totals.keys()).union(expense_totals.keys()))
+    income_values = [income_totals[date] for date in dates]
+    expense_values = [expense_totals[date] for date in dates]
+
+    fig, ax = plt.subplots()
+    ax.plot(dates, income_values, label='Income')
+    ax.plot(dates, expense_values, label='Expense')
+
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Amount')
+    ax.set_title('Income and Expense Over Time')
+    ax.legend()
+
+    plt.show()
