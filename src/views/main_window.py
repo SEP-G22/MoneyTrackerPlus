@@ -52,6 +52,8 @@ class MoneyTrackerPlusView(QWidget):
         self.layout.addWidget(scroll_area)  # 添加到布局中
         self.layout.addWidget(self.content_stack)
 
+        self.resize(1000, 400)
+
     @classmethod
     def get_stylesheet(cls):
         return """
