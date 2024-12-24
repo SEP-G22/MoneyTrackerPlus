@@ -33,6 +33,7 @@ class SettingsView(MoneyTrackerWidget):
 
         # 2. 帳本選擇 ComboBox
         self.accountbook_combo = QComboBox()
+        self.accountbook_name_input = QLineEdit()
         self.load_account_books()
         layout.addWidget(self.accountbook_combo)
 
@@ -55,7 +56,6 @@ class SettingsView(MoneyTrackerWidget):
 
         # 4. 顯示並修改帳本設定
         self.accountbook_settings_layout = QFormLayout()
-        self.accountbook_name_input = QLineEdit(self.accountbook_combo.currentText())
         rename_button = QPushButton("更改名稱")
         rename_button.setObjectName("cancelButton")
         rename_button.clicked.connect(self.rename_account_book)
