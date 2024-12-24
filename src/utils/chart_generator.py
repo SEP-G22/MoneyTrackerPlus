@@ -143,7 +143,7 @@ def generate_bar_chart(transactions):
 
     # Add labels, title, and legend
     ax.set_xlabel('Amount')
-    ax.set_title('Income and Expense Breakdown')
+    ax.set_title('支出與收入分析')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=3)  # Adjusted legend position
 
     # Beautify the plot
