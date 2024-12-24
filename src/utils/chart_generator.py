@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
@@ -77,29 +78,53 @@ def generate_pie_chart(transactions):
 
 
 def generate_line_chart(transactions):
-    income_totals = defaultdict(float)
-    expense_totals = defaultdict(float)
+    if not transactions:
+        image_path = os.path.join('images', 'line_chart.png')
+        generate_empty_image(image_path)
+        return image_path
+    # Initialize dictionaries to store income and expense totals by week
+    weekly_income = defaultdict(float)
+    weekly_expense = defaultdict(float)
 
+    # Process each transaction
     for transaction in transactions:
-        if transaction.type == 'income':
-            income_totals[transaction.date] += transaction.amount
-        elif transaction.type == 'expense':
-            expense_totals[transaction.date] += transaction.amount
+        week_start = transaction.date - timedelta(days=transaction.date.weekday())
+        if transaction.category.type == 'Income':
+            weekly_income[week_start] += transaction.amount
+        elif transaction.category.type == 'Expense':
+            weekly_expense[week_start] += transaction.amount
 
-    dates = sorted(set(income_totals.keys()).union(expense_totals.keys()))
-    income_values = [income_totals[date] for date in dates]
-    expense_values = [expense_totals[date] for date in dates]
+    # Sort the weeks
+    sorted_weeks = sorted(weekly_income.keys() | weekly_expense.keys())
 
-    fig, ax = plt.subplots()
-    ax.plot(dates, income_values, label='Income')
-    ax.plot(dates, expense_values, label='Expense')
+    # Prepare data for plotting
+    dates = [week.strftime('%Y-%m-%d') for week in sorted_weeks]
+    income_values = [weekly_income[week] for week in sorted_weeks]
+    expense_values = [weekly_expense[week] for week in sorted_weeks]
+    balance_values = [income - expense for income, expense in zip(income_values, expense_values)]
 
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Amount')
-    ax.set_title('Income and Expense Over Time')
-    ax.legend()
+    # Convert date strings to datetime objects
+    dates = [datetime.strptime(date, '%Y-%m-%d') for date in dates]
 
-    plt.show()
+    # Plot the line chart
+    plt.figure(figsize=(10, 5))
+    plt.plot(dates, income_values, label='收入', marker='o')
+    plt.plot(dates, expense_values, label='支出', marker='o')
+    plt.plot(dates, balance_values, label='結餘', marker='o')
+    plt.xlabel('日期 (每周)')
+    plt.ylabel('金額 (元)')
+    plt.title('每周總收支情形')
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+
+    # Save the plot to a file
+    image_path = os.path.join('images', 'line_chart.png')
+    plt.tight_layout()
+    plt.savefig(image_path)
+    plt.close()
+
+    return image_path
 
 
 def generate_bar_chart(transactions):
