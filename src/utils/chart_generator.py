@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib import rc
-
+from models.transaction import Transaction, TransactionCategory
 # 設定中文字體為 Microsoft YaHei 或 STHeiti，這些字體在許多系統中都有安裝
 rc("font", family="Microsoft YaHei")  # 你可以替換為 "STHeiti" 或 "Arial Unicode MS"
 rc("axes", unicode_minus=False)  # 解決負號顯示問題
@@ -27,8 +27,8 @@ class PieChartWidget(QWidget):
 
         # 表格顯示每個交易的收入/支出明細
         self.table = QTableWidget()
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(["日期", "描述", "金額"])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["日期", "分類", "金額", "備註"])
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         layout.addWidget(self.table)
@@ -47,7 +47,7 @@ class PieChartWidget(QWidget):
         # 解析傳入的交易數據
         data = {"收入": 0, "支出": 0}
         for transaction in self.transactions:
-            amount = transaction["amount"]
+            amount = transaction.amount
             if amount > 0:
                 data["收入"] += amount
             else:
@@ -68,19 +68,20 @@ class PieChartWidget(QWidget):
 
         # 更新表格內容
         self.table.setRowCount(len(self.transactions))
-        for i, transaction in enumerate(self.transactions):
-            self.table.setItem(i, 0, QTableWidgetItem(transaction["date"]))
-            self.table.setItem(i, 1, QTableWidgetItem(transaction["description"]))
-            self.table.setItem(i, 2, QTableWidgetItem(f"{transaction['amount']}"))
+        for row, transaction in enumerate(self.transactions):
+            self.table.setItem(row, 0, QTableWidgetItem(transaction.date.strftime("%Y-%m-%d %H:%M:%S")))
+            self.table.setItem(row, 1, QTableWidgetItem(transaction.category.category))
+            self.table.setItem(row, 2, QTableWidgetItem(str(transaction.amount)))
+            self.table.setItem(row, 3, QTableWidgetItem(transaction.description))
 
 if __name__ == "__main__":
     # 測試數據
     transactions = [
-        {"id": 1, "amount": -500, "date": "2024-12-22", "description": "食物"},
-        {"id": 2, "amount": -200, "date": "2024-12-21", "description": "交通"},
-        {"id": 3, "amount": -150, "date": "2024-12-20", "description": "娛樂"},
-        {"id": 4, "amount": 3000, "date": "2024-12-19", "description": "薪水"},
-        {"id": 5, "amount": 500, "date": "2024-12-18", "description": "投資"},
+        Transaction(1, 1000, "2023-01-01", "a", TransactionCategory("薪水", "收入")),
+        Transaction(2, -200, "2023-01-02", "b", TransactionCategory("餐費", "支出")),
+        Transaction(3, 500, "2023-01-03", "c", TransactionCategory("電費", "支出")),
+        Transaction(4, -300, "2023-01-04", "d", TransactionCategory("衣服", "支出")),
+        Transaction(5, 800, "2023-01-05", "e", TransactionCategory("獎金", "收入")),
     ]
 
     app = QApplication(sys.argv)
