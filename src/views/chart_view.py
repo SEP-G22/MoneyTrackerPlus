@@ -50,7 +50,16 @@ class ChartView(MoneyTrackerWidget):
         date_end_layout.addWidget(self.date_end_edit)
         layout.addLayout(date_end_layout)
 
-        # 4. 確定新增按鈕
+        # 4. 選擇圖表
+        select_chart_layout = QHBoxLayout()
+        select_chart_layout.addWidget(QLabel("選擇圖表："))
+        select_chart_layout.addStretch()
+        self.chart_combo = QComboBox()
+        self.chart_combo.addItems(["圓餅圖", "折線圖", "柱狀圖"])
+        select_chart_layout.addWidget(self.chart_combo)
+        layout.addLayout(select_chart_layout)
+
+        # 5. 確定新增按鈕
         button_layout = QHBoxLayout()
         button_layout.addWidget(QLabel(""))
         button_layout.addStretch()
@@ -92,7 +101,14 @@ class ChartView(MoneyTrackerWidget):
         accountbook = get_account_book(self.accountbook_combo.currentText())
         transactions = self.get_transactions(accountbook, self.date_start_edit.date().toPyDate(),
                                              self.date_end_edit.date().toPyDate())
-        chart_image_path = generate_pie_chart(transactions)
+        chart_type = self.chart_combo.currentText()
+
+        if chart_type == "圓餅圖":
+            chart_image_path = generate_pie_chart(transactions)
+        elif chart_type == "折線圖":
+            chart_image_path = generate_line_chart(transactions)
+        elif chart_type == "柱狀圖":
+            chart_image_path = generate_bar_chart(transactions)
         self.chart_label.setPixmap(QPixmap(chart_image_path))
 
     @classmethod
