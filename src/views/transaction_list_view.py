@@ -22,7 +22,6 @@ class TransactionListView(MoneyTrackerWidget):
         self.transactions_per_page = 50
         self.config_service = ConfigService()
         self.data_service = DataService('local_account_books.json')
-        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(), self.config_service.get_db_url())
         self.transactions = []
         self.initSearchData()
         self.setStyleSheet("""
@@ -223,10 +222,7 @@ class TransactionListView(MoneyTrackerWidget):
         account_book = get_account_book(account_book_name)
         if account_book:
             account_book.transactions = [t for t in account_book.transactions if t.id != transaction.id]
-            if account_book.type == 0:  # 本地帳本
-                self.data_service.write_transactions(account_book_name, account_book.transactions)
-            else:  # 雲端帳本
-                self.cloud_service.upload_account_book(account_book)
+            self.data_service.write_transactions(account_book_name, account_book.transactions)
 
     def reset_filters(self):
         self.start_date_edit.setDate(QDate.currentDate().addMonths(-1))

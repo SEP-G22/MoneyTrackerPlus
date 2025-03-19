@@ -17,7 +17,6 @@ class ChartView(MoneyTrackerWidget):
         super().__init__(parent)
         self.config_service = ConfigService()
         self.data_service = DataService('local_account_books.json')
-        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(), self.config_service.get_db_url())
         self.initPlotAnalysis()
 
     def initPlotAnalysis(self):

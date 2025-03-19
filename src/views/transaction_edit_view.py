@@ -19,8 +19,6 @@ class TransactionEditView(MoneyTrackerWidget):
         super().__init__(parent)
         self.data_service = DataService('local_account_books.json')
         self.config_service = ConfigService()
-        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(),
-                                              self.config_service.get_db_url())
         self.transaction = transaction
         self.initAddData()
 
@@ -121,10 +119,7 @@ class TransactionEditView(MoneyTrackerWidget):
                     category=category
                 )
                 account_book.add_transaction(new_transaction)
-                if account_book.type == 0:  # 本地帳本
-                    self.data_service.write_transactions(account_book_name, account_book.transactions)
-                else:  # 雲端帳本
-                    self.cloud_service.upload_account_book(account_book)
+                self.data_service.write_transactions(account_book_name, account_book.transactions)
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
                 msg_box.setWindowTitle("成功")
@@ -141,10 +136,7 @@ class TransactionEditView(MoneyTrackerWidget):
                     if t.id == self.transaction.id:
                         account_book.transactions[i] = self.transaction
                         break
-                if account_book.type == 0:  # 本地帳本
-                    self.data_service.write_transactions(account_book_name, account_book.transactions)
-                else:  # 雲端帳本
-                    self.cloud_service.upload_account_book(account_book)
+                self.data_service.write_transactions(account_book_name, account_book.transactions)
                 self.transaction = None
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
