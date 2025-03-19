@@ -4,7 +4,7 @@
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
-
+from .file_utils import FileUtils
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,7 +14,7 @@ from models import *
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # Use Microsoft YaHei font for Chinese characters
 plt.rcParams['axes.unicode_minus'] = False  # Ensure minus sign is displayed correctly
 
-
+IMAGE_FOLDER = "images"
 def generate_empty_image(image_path):
     """
     Generate an empty image with a 'No Data Available' message.
@@ -39,7 +39,8 @@ def generate_pie_chart(transactions):
     :rtype: str
     """
     if not transactions:
-        image_path = os.path.join('images', 'pie_chart.png')
+        FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+        image_path = os.path.join(IMAGE_FOLDER, 'pie_chart.png')
         generate_empty_image(image_path)
         return image_path
 
@@ -87,8 +88,8 @@ def generate_pie_chart(transactions):
 
     plt.subplots_adjust(left=0.1, right=0.9, top=0.95, bottom=0.05, wspace=0.4)
 
-    # Save the plot to a file
-    image_path = os.path.join('images', 'pie_chart.png')
+    FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+    image_path = os.path.join(IMAGE_FOLDER, 'pie_chart.png')
     plt.savefig(image_path)
     plt.close(fig)
 
@@ -105,7 +106,8 @@ def generate_line_chart(transactions):
     :rtype: str
     """
     if not transactions:
-        image_path = os.path.join('images', 'line_chart.png')
+        FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+        image_path = os.path.join(IMAGE_FOLDER, 'line_chart.png')
         generate_empty_image(image_path)
         return image_path
 
@@ -146,7 +148,8 @@ def generate_line_chart(transactions):
     plt.xticks(rotation=45)
 
     # Save the plot to a file
-    image_path = os.path.join('images', 'line_chart.png')
+    FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+    image_path = os.path.join(IMAGE_FOLDER, 'line_chart.png')
     plt.tight_layout()
     plt.savefig(image_path)
     plt.close()
@@ -164,7 +167,8 @@ def generate_bar_chart(transactions):
     :rtype: str
     """
     if not transactions:
-        image_path = os.path.join('images', 'bar_chart.png')
+        FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+        image_path = os.path.join(IMAGE_FOLDER, 'bar_chart.png')
         generate_empty_image(image_path)
         return image_path
 
@@ -219,7 +223,8 @@ def generate_bar_chart(transactions):
     plt.tight_layout()
 
     # Save the plot to a file
-    image_path = os.path.join('images', 'bar_chart.png')
+    FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+    image_path = os.path.join(IMAGE_FOLDER, 'bar_chart.png')
     plt.savefig(image_path)
     plt.close(fig)
 
