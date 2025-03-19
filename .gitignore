@@ -5,3 +5,10 @@
 __pycache__/
 /src/Firebase_credit/
 .DS_Store
+/src/config.json
+/src/local_account_books.json
+/src/images/pie_chart.png
+/src/images/line_chart.png
+/src/images/bar_chart.png
+local_account_books.json
+config.json

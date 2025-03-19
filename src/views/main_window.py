@@ -1,10 +1,9 @@
+# Implemented by 李崑銘 & 陳衍廷
 from typing import Type, Final
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QListWidget, QListWidgetItem, \
     QStackedWidget, QScrollArea, QWidget, QLabel, QDateEdit, QComboBox, QLineEdit, QPushButton \
-    
-from PyQt5.QtCore import QDate
 
 from .chart_view import ChartView
 from .money_tracker_widget import MoneyTrackerWidget
@@ -42,12 +41,17 @@ class MoneyTrackerPlusView(QWidget):
         # 创建右侧的内容区域
         self.content_stack = QStackedWidget()
         for it in self.items:
-            self.content_stack.addWidget(it(self))
+            widget = it(self)
+            self.content_stack.addWidget(widget)
+            if isinstance(widget, TransactionListView):
+                widget.switch_view.connect(self.display_content)
 
         # 设置主布局
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(scroll_area)  # 添加到布局中
         self.layout.addWidget(self.content_stack)
+
+        self.resize(1000, 400)
 
     @classmethod
     def get_stylesheet(cls):
@@ -116,3 +120,12 @@ class MoneyTrackerPlusView(QWidget):
 
     def display_content(self, index):
         self.content_stack.setCurrentIndex(index)
+        self.category_list.setCurrentRow(index)
+        if index == 0:
+            self.content_stack.currentWidget().load_transaction_data()
+        if index == 1:
+            self.content_stack.currentWidget().load_transactions()
+        if index == 2:
+            self.content_stack.currentWidget().display_plot()
+        if index == 3:
+            self.content_stack.currentWidget().load_account_books()

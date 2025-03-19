@@ -1,11 +1,10 @@
-# src/services/data_service.py
+# This file contains the DataService class that is responsible for reading and writing account books to a local JSON file.
+# Implemented by 李崑銘
 
 import json
 import os
 from typing import List, Dict, Any
-from datetime import datetime
 from models import *
-from models.transaction import TransactionCategory
 
 
 class DataService:
@@ -44,6 +43,22 @@ class DataService:
         with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump([account_book.to_dict() for account_book in account_books], file, ensure_ascii=False, indent=4)
 
+    def write_transactions(self, account_book_name: str, transactions: List[Transaction]) -> None:
+        """
+        Write transactions to the JSON file for a specific account book.
+
+        :param account_book_name: The name of the account book.
+        :type account_book_name: str
+        :param transactions: List of transactions to write.
+        :type transactions: List[Transaction]
+        """
+        account_books = self.read_account_books()
+        for account_book in account_books:
+            if account_book.name == account_book_name:
+                account_book.transactions = transactions
+                break
+        self.write_account_books(account_books)
+
     def _dict_to_account_book(self, data: Dict[str, Any]) -> AccountBook:
         """
         Convert a dictionary to an AccountBook instance.
@@ -53,15 +68,4 @@ class DataService:
         :return: AccountBook instance.
         :rtype: AccountBook
         """
-        account_book = AccountBook(data['name'])
-        for transaction_data in data['transactions']:
-            transaction = Transaction(
-                id=transaction_data['id'],
-                amount=transaction_data['amount'],
-                date=datetime.fromisoformat(transaction_data['date']),
-                description=transaction_data['description'],
-                type=transaction_data['type'],
-                category=TransactionCategory(category=transaction_data['category'], type=transaction_data['type'])
-            )
-            account_book.add_transaction(transaction)
-        return account_book
+        return AccountBook.from_json(data)
