@@ -90,6 +90,7 @@ class SettingsView(MoneyTrackerWidget):
                 new_book = AccountBook(accountbook_name, 0)
                 self.data_service.write_account_books(get_local_books() + [new_book])
                 QMessageBox.information(self, "成功", f"本地帳本 '{accountbook_name}' 新增成功！")
+                self.config_service.set_default_account_book(accountbook_name)
                 self.load_account_books()
                 self.accountbook_combo.setCurrentText(accountbook_name)
         except Exception as e:
@@ -119,6 +120,7 @@ class SettingsView(MoneyTrackerWidget):
             self.data_service.write_account_books(local_books)
 
             QMessageBox.information(self, "成功", f"帳本 '{current_name}' 已更名為 '{new_name}'")
+            self.config_service.set_default_account_book(accountbook_name)
             self.load_account_books()
             self.accountbook_combo.setCurrentText(new_name)
         except Exception as e:

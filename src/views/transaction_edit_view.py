@@ -98,7 +98,16 @@ class TransactionEditView(MoneyTrackerWidget):
         account_book_name = self.config_service.get_default_account_book()
         account_book = get_account_book(account_book_name)
 
-        if not amount or not description or not account_book_name:
+        if not account_book_name:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("錯誤")
+            msg_box.setText("請選擇一個帳本！")
+            msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
+            msg_box.exec_()
+            return
+
+        if not amount or not description:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setWindowTitle("錯誤")
@@ -162,7 +171,7 @@ class TransactionEditView(MoneyTrackerWidget):
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setWindowTitle("失敗")
-            msg_box.setText("帳目操作失敗，請重試！")
+            msg_box.setText(f"帳目操作失敗，請重試！{e}")
             msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
             msg_box.exec_()
             print(e)
