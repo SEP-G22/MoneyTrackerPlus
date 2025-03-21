@@ -46,7 +46,7 @@ pipeline {
                     if (result != 0) {
                         error("Test 2 Failed!") // Jenkins UI 會顯示 Test 2 失敗
                     }
-                    //just add make some change to test the hook
+                    //just add make some change to test the hook2
                 }
             }
         }
