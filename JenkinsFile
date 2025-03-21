@@ -24,7 +24,7 @@ pipeline {
                         if exist local_account_books.json del local_account_books.json
                         if exist config.json del config.json
                         start main.exe
-                        Robotiive_runner.exe Final Open
+                        ..\\..\\Robotiive_runner.exe Final Open
                     ''', returnStatus: true)
 
                     if (result != 0) {
@@ -36,12 +36,11 @@ pipeline {
         stage('Test 2') {
             steps {
                 script {
-                    echo "Current working dir: ${pwd()}"
                     echo "Running Test 2..."
                     def result = bat(script: '''
                         cd src\\dist
-                        start src\\dist\\main.exe
-                        Robotiive_runner.exe Final Open_copy_1
+                        start main.exe
+                        ..\\..\\Robotiive_runner.exe Final Open_copy_1
                     ''', returnStatus: true)
 
                     if (result != 0) {
