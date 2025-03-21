@@ -1,0 +1,54 @@
+pipeline {
+    agent any  // 允許在任何可用的 Jenkins 節點執行
+    stages {
+        stage('Build & Prepare') {
+            steps {
+                script {
+                    echo "Current working dir: ${pwd()}"
+                    echo "Building the project..."
+                    bat '''
+                        chcp 65001 >nul
+                        cd src
+                        pyinstaller --onefile --windowed main.py
+                    '''
+                }
+            }
+        }
+        stage('Test 1') {
+            steps {
+                script {
+                    echo "Running Test 1..."
+                    def result = bat(script: '''
+                        echo "Current working dir: ${pwd()}"
+                        cd src\\dist
+                        if exist local_account_books.json del local_account_books.json
+                        if exist config.json del config.json
+                        start main.exe
+                        Robotiive_runner.exe Final Open
+                    ''', returnStatus: true)
+
+                    if (result != 0) {
+                        error("Test 1 Failed!") // Jenkins UI 會顯示 Test 1 失敗
+                    }
+                }
+            }
+        }
+        stage('Test 2') {
+            steps {
+                script {
+                    echo "Current working dir: ${pwd()}"
+                    echo "Running Test 2..."
+                    def result = bat(script: '''
+                        cd src\\dist
+                        start src\\dist\\main.exe
+                        Robotiive_runner.exe Final Open_copy_1
+                    ''', returnStatus: true)
+
+                    if (result != 0) {
+                        error("Test 2 Failed!") // Jenkins UI 會顯示 Test 2 失敗
+                    }
+                }
+            }
+        }
+    }
+}
