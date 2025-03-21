@@ -120,6 +120,8 @@ class TransactionEditView(MoneyTrackerWidget):
             category = TransactionCategory.predefined_categories()[category_name]
             if self.transaction is None:
                 # 新增操作
+                if float(amount) < 0:
+                    raise ValueError('Negative amount is not allowed.')
                 new_transaction = Transaction(
                     id=self.generate_new_id(),  # 假設有一個方法來生成新的ID
                     date=datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S"),
@@ -138,6 +140,8 @@ class TransactionEditView(MoneyTrackerWidget):
             else:
                 # 修改操作
                 self.transaction.date = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+                if float(amount) < 0:
+                    raise ValueError('Negative amount is not allowed.')
                 self.transaction.amount = float(amount)
                 self.transaction.description = description
                 self.transaction.category = category
