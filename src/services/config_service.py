@@ -1,5 +1,4 @@
 # This file contains the ConfigService class which is responsible for reading and writing the config.json file.
-# Implemented by 李崑銘
 
 import json
 import os

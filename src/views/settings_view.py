@@ -1,5 +1,3 @@
-# Implemented by 李崑銘 & 陳衍廷
-
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QLineEdit, QMessageBox, QFormLayout
 
 from .money_tracker_widget import MoneyTrackerWidget
