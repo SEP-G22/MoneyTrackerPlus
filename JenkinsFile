@@ -25,7 +25,6 @@ pipeline {
                 script {
                     tests_2.each { testName ->
                         stage("${testName}") {
-                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                 echo "Running ${testName}..."
 
                                 def result = bat(script: """
@@ -37,7 +36,6 @@ pipeline {
                                 if (result != 0) {
                                     error("${testName} Failed!")
                                 }
-                            } 
                         }
                     }
                 }
@@ -53,7 +51,6 @@ pipeline {
                     '''
                     tests_4.each { testName ->
                         stage("${testName}") {
-                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                 echo "Running ${testName}..."
 
                                 def result = bat(script: """
@@ -65,7 +62,6 @@ pipeline {
                                 if (result != 0) {
                                     error("${testName} Failed!")
                                 }
-                            }
                         }
                     }
                 }
