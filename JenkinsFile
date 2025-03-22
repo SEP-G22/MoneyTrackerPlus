@@ -48,8 +48,8 @@ pipeline {
             steps {
                 script {
                     bat'''
-                    if exist src\\dist\\local_account_books.json del dist\\local_account_books.json
-                    if exist src\\dist\\config.json del dist\\config.json
+                    if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                    if exist src\\dist\\config.json del src\\dist\\config.json
                     '''
                     tests_4.each { testName ->
                         stage("${testName}") {
