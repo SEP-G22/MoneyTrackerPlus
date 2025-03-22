@@ -31,7 +31,7 @@ pipeline {
                                 def result = bat(script: """
                                     if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
                                     if exist src\\dist\\config.json del src\\dist\\config.json
-                                    py test script\${testName}.py
+                                    py test script\\${testName}.py
                                     cd src\\dist
                                     start main.exe
                                     ..\\..\\Robotiive_runner.exe Final1_2 ${testName}
