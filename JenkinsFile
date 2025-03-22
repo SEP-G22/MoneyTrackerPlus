@@ -1,0 +1,122 @@
+def tests_1_2 = (6..9).collect { String.format("Testcase1-%02d", it) }
+def tests_2 = (1..8).collect { String.format("Testcase2-%02d", it) }
+def tests_3 = (1..8).collect { String.format("Testcase3-%02d", it) }
+def tests_4 = (1..10).collect { String.format("Testcase4-%02d", it) }
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build & Prepare') {
+            steps {
+                script {
+                    echo "Current working dir: ${pwd()}"
+                    echo "Building the project..."
+                    bat '''
+                        chcp 65001 >nul
+                        cd src
+                        pyinstaller --onefile --windowed main.py
+                        if exist dist\\local_account_books.json del dist\\local_account_books.json
+                        if exist dist\\config.json del dist\\config.json
+                    '''
+                }
+            }
+        }
+        stage('Run Testcases 3-01 to 3-08') {
+            steps {
+                script {
+                    tests_3.each { testName ->
+                        stage("${testName}") {
+                                echo "Running ${testName}..."
+
+                                def result = bat(script: """
+                                    if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                                    if exist src\\dist\\config.json del src\\dist\\config.json
+                                    py .\\test_script\\${testName}.py
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final3 ${testName}
+                                """, returnStatus: true)
+
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Run Testcases 1-06 to 1-09') {
+            steps {
+                script {
+                    tests_1_2.each { testName ->
+                        stage("${testName}") {
+                                echo "Running ${testName}..."
+
+                                def result = bat(script: """
+                                    if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                                    if exist src\\dist\\config.json del src\\dist\\config.json
+                                    py .\\test_script\\${testName}.py
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final1_2 ${testName}
+                                """, returnStatus: true)
+
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Run Testcases 2-01 to 2-08') {
+            steps {
+                script {
+                    tests_2.each { testName ->
+                        stage("${testName}") {
+                                echo "Running ${testName}..."
+
+                                def result = bat(script: """
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final2 ${testName}
+                                """, returnStatus: true)
+
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
+                        }
+                    }
+                }
+            }
+        }
+        // 用一個 script 來動態創建所有 test stages
+        stage('Run Testcases 4-01 to 4-10') {
+            steps {
+                script {
+                    bat'''
+                    if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                    if exist src\\dist\\config.json del src\\dist\\config.json
+                    '''
+                    tests_4.each { testName ->
+                        stage("${testName}") {
+                                echo "Running ${testName}..."
+
+                                def result = bat(script: """
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final4 ${testName}
+                                """, returnStatus: true)
+
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

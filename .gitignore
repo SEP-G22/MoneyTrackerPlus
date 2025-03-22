@@ -12,3 +12,4 @@ __pycache__/
 /src/images/bar_chart.png
 local_account_books.json
 config.json
+images/

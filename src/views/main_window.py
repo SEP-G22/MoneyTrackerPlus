@@ -1,5 +1,4 @@
-# Implemented by 李崑銘 & 陳衍廷
-from typing import Type, Final
+from typing import Type, Final, List
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QListWidget, QListWidgetItem, \
@@ -14,7 +13,7 @@ from .transaction_list_view import TransactionListView
 
 class MoneyTrackerPlusView(QWidget):
 
-    items: Final[list[Type[MoneyTrackerWidget]]] = [TransactionEditView, TransactionListView, ChartView, SettingsView]
+    items: Final[List[Type[MoneyTrackerWidget]]] = [TransactionEditView, TransactionListView, ChartView, SettingsView]
 
     def __init__(self, parent=None):
         super().__init__(parent)

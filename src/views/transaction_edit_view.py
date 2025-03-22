@@ -1,5 +1,3 @@
-# Implemented by 李崑銘 & 陳衍廷 & 蔡淵丞
-
 import uuid
 from datetime import datetime
 
@@ -19,8 +17,6 @@ class TransactionEditView(MoneyTrackerWidget):
         super().__init__(parent)
         self.data_service = DataService('local_account_books.json')
         self.config_service = ConfigService()
-        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(),
-                                              self.config_service.get_db_url())
         self.transaction = transaction
         self.initAddData()
 
@@ -100,7 +96,16 @@ class TransactionEditView(MoneyTrackerWidget):
         account_book_name = self.config_service.get_default_account_book()
         account_book = get_account_book(account_book_name)
 
-        if not amount or not description or not account_book_name:
+        if not account_book_name:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("錯誤")
+            msg_box.setText("請選擇一個帳本！")
+            msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
+            msg_box.exec_()
+            return
+
+        if not amount or not description:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setWindowTitle("錯誤")
@@ -113,6 +118,8 @@ class TransactionEditView(MoneyTrackerWidget):
             category = TransactionCategory.predefined_categories()[category_name]
             if self.transaction is None:
                 # 新增操作
+                if float(amount) < 0:
+                    raise ValueError('Negative amount is not allowed.')
                 new_transaction = Transaction(
                     id=self.generate_new_id(),  # 假設有一個方法來生成新的ID
                     date=datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S"),
@@ -121,10 +128,7 @@ class TransactionEditView(MoneyTrackerWidget):
                     category=category
                 )
                 account_book.add_transaction(new_transaction)
-                if account_book.type == 0:  # 本地帳本
-                    self.data_service.write_transactions(account_book_name, account_book.transactions)
-                else:  # 雲端帳本
-                    self.cloud_service.upload_account_book(account_book)
+                self.data_service.write_transactions(account_book_name, account_book.transactions)
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
                 msg_box.setWindowTitle("成功")
@@ -134,6 +138,8 @@ class TransactionEditView(MoneyTrackerWidget):
             else:
                 # 修改操作
                 self.transaction.date = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+                if float(amount) < 0:
+                    raise ValueError('Negative amount is not allowed.')
                 self.transaction.amount = float(amount)
                 self.transaction.description = description
                 self.transaction.category = category
@@ -141,10 +147,7 @@ class TransactionEditView(MoneyTrackerWidget):
                     if t.id == self.transaction.id:
                         account_book.transactions[i] = self.transaction
                         break
-                if account_book.type == 0:  # 本地帳本
-                    self.data_service.write_transactions(account_book_name, account_book.transactions)
-                else:  # 雲端帳本
-                    self.cloud_service.upload_account_book(account_book)
+                self.data_service.write_transactions(account_book_name, account_book.transactions)
                 self.transaction = None
                 msg_box = QMessageBox()
                 msg_box.setIcon(QMessageBox.Information)
@@ -170,7 +173,7 @@ class TransactionEditView(MoneyTrackerWidget):
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
             msg_box.setWindowTitle("失敗")
-            msg_box.setText("帳目操作失敗，請重試！")
+            msg_box.setText(f"帳目操作失敗，請重試！{e}")
             msg_box.setStyleSheet("QLabel{color: black; font-size: 10pt;}")
             msg_box.exec_()
             print(e)

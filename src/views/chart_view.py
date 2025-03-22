@@ -1,5 +1,4 @@
 # This file is for the chart analysis view
-# Implemented by 林楷傑 & 陳衍廷
 
 from datetime import datetime
 from PyQt5.QtCore import QDate
@@ -17,7 +16,6 @@ class ChartView(MoneyTrackerWidget):
         super().__init__(parent)
         self.config_service = ConfigService()
         self.data_service = DataService('local_account_books.json')
-        self.cloud_service = CloudSyncService(self.config_service.get_cred_path(), self.config_service.get_db_url())
         self.initPlotAnalysis()
 
     def initPlotAnalysis(self):

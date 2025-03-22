@@ -1,5 +1,4 @@
 # This file contains utility functions for account books
-# Implemented by 陳衍廷
 
 from models import *
 from services import *
@@ -20,21 +19,6 @@ def get_local_books():
         return []
 
 
-def get_cloud_books():
-    """
-    Retrieve account books from the cloud (Firebase Realtime Database).
-
-    :return: List of cloud account books.
-    :rtype: List[AccountBook]
-    """
-    try:
-        service = CloudSyncService(ConfigService().get_cred_path(), ConfigService().get_db_url())
-        return service.download_account_books()
-    except Exception as e:
-        print(e)
-        return []
-
-
 def get_account_book(name: str) -> AccountBook:
     """
     Retrieve an account book by name from local and cloud sources.
@@ -46,8 +30,7 @@ def get_account_book(name: str) -> AccountBook:
     """
     try:
         local_books = get_local_books()
-        cloud_books = get_cloud_books()
-        for book in local_books + cloud_books:
+        for book in local_books:
             if book.name == name:
                 return book
         return None
