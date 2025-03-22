@@ -14,39 +14,23 @@ pipeline {
                 }
             }
         }
-        // stage('Test 1') {
-        //     steps {
-        //         script {
-        //             echo "Running Test 1..."
-        //             def result = bat(script: '''
-        //                 echo "Current working dir: ${pwd()}"
-        //                 cd src\\dist
-        //                 if exist local_account_books.json del local_account_books.json
-        //                 if exist config.json del config.json
-        //                 start main.exe
-        //                 ..\\..\\Robotiive_runner.exe Final Open
-        //             ''', returnStatus: true)
-
-        //             if (result != 0) {
-        //                 error("Test 1 Failed!") // Jenkins UI 會顯示 Test 1 失敗
-        //             }
-        //         }
-        //     }
-        // }
-        stage('Testcase4-01') {
+        stage('Run Testcases 4-01 to 4-10') {
             steps {
                 script {
-                    echo "Running Test 2..."
-                    def result = bat(script: '''
-                        cd src\\dist
-                        start main.exe
-                        ..\\..\\Robotiive_runner.exe Final Testcase4-01
-                    ''', returnStatus: true)
+                    for (int i = 1; i <= 10; i++) {
+                        def testName = String.format("Testcase4-%02d", i)
+                        echo "Running ${testName}..."
 
-                    if (result != 0) {
-                        error("Test 2 Failed!") // Jenkins UI 會顯示 Test 2 失敗
+                        def result = bat(script: """
+                            cd src\\dist
+                            start main.exe
+                            ..\\..\\Robotiive_runner.exe Final ${testName}
+                        """, returnStatus: true)
+
+                        if (result != 0) {
+                            error("${testName} Failed!") // Jenkins UI 顯示哪個 testcase 失敗
+                        }
                     }
-                    //just add make some change to test the hook2
                 }
             }
         }
