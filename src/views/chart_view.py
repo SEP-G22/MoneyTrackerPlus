@@ -1,5 +1,4 @@
 # This file is for the chart analysis view
-# Implemented by 林楷傑 & 陳衍廷
 
 from datetime import datetime
 from PyQt5.QtCore import QDate

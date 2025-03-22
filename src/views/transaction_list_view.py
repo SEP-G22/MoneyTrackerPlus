@@ -1,5 +1,3 @@
-# Implemented by 李崑銘 & 陳衍廷
-
 import re
 
 from PyQt5.QtCore import QDate, Qt, pyqtSignal

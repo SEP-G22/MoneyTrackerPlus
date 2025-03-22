@@ -1,5 +1,4 @@
 # This file is used to get the predefined categories from the TransactionCategory model
-# Implemented by 蔡淵丞
 
 from models import *
 

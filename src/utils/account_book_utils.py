@@ -1,5 +1,4 @@
 # This file contains utility functions for account books
-# Implemented by 陳衍廷
 
 from models import *
 from services import *

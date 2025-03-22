@@ -1,5 +1,4 @@
 # This file contains the AccountBook class which represents an account book that contains multiple transactions.
-# Implemented by 陳衍廷
 
 from typing import List, Dict, Any
 from .transaction import Transaction

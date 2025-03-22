@@ -1,5 +1,4 @@
 # Description: This module contains functions to generate pie, line, and bar charts for the dashboard.
-# implemented by 林楷傑
 
 import os
 from datetime import datetime, timedelta
