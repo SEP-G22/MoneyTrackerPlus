@@ -48,6 +48,8 @@ def generate_pie_chart(transactions):
     expense_totals = defaultdict(float)
 
     for transaction in transactions:
+        if transaction.amount <= 0:
+            continue
         if transaction.category.type == 'Income':
             income_totals[transaction.category.category] += transaction.amount
         elif transaction.category.type == 'Expense':
@@ -62,29 +64,45 @@ def generate_pie_chart(transactions):
     first_sizes = [total_income, total_expense]
 
     # Data for the second pie chart (expense categories)
-    second_labels = expense_totals.keys()
-    second_sizes = expense_totals.values()
+    second_labels = list(expense_totals.keys())
+    second_sizes = list(expense_totals.values())
 
     # Data for the third pie chart (income categories)
-    third_labels = income_totals.keys()
-    third_sizes = income_totals.values()
+    third_labels = list(income_totals.keys())
+    third_sizes = list(income_totals.values())
+
+    # **防止 zero-division 錯誤**
+    if sum(first_sizes) == 0 or (not second_sizes and not third_sizes):
+        FileUtils.make_sure_directory_exists(IMAGE_FOLDER)
+        image_path = os.path.join(IMAGE_FOLDER, 'pie_chart.png')
+        generate_empty_image(image_path)
+        return image_path
 
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
 
     # Plot first pie chart (income vs expense)
-    wedges, texts, autotexts = axs[0].pie(first_sizes, labels=first_labels, autopct='%1.1f%%', startangle=90, colors=['#66b3ff','#ff9999'], wedgeprops=dict(width=0.3, edgecolor='w'))
+    if sum(first_sizes) > 0:
+        axs[0].pie(first_sizes, labels=first_labels, autopct='%1.1f%%', startangle=90, colors=['#66b3ff','#ff9999'],
+                   wedgeprops=dict(width=0.3, edgecolor='w'))
+    else:
+        axs[0].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[0].set_title('收入與支出')
-    axs[0].text(0, 0, f'結餘: \n{balance:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
 
     # Plot second pie chart (expense categories)
-    wedges, texts, autotexts = axs[1].pie(second_sizes, labels=second_labels, autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+    if sum(second_sizes) > 0:
+        axs[1].pie(second_sizes, labels=second_labels, autopct='%1.1f%%', startangle=90,
+                   colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+    else:
+        axs[1].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[1].set_title('支出分類')
-    axs[1].text(0, 0, f'總支出: \n{total_expense:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
 
     # Plot third pie chart (income categories)
-    wedges, texts, autotexts = axs[2].pie(third_sizes, labels=third_labels, autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+    if sum(third_sizes) > 0:
+        axs[2].pie(third_sizes, labels=third_labels, autopct='%1.1f%%', startangle=90,
+                   colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+    else:
+        axs[2].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[2].set_title('收入分類')
-    axs[2].text(0, 0, f'總收入: \n{total_income:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
 
     plt.subplots_adjust(left=0.1, right=0.9, top=0.95, bottom=0.05, wspace=0.4)
 
