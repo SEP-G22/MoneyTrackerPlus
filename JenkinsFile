@@ -36,7 +36,7 @@ pipeline {
                                     py .\\test_script\\${testName}.py
                                     cd src\\dist
                                     start main.exe
-                                    ..\\..\\Robotiive_runner.exe Final1_2 ${testName}
+                                    ..\\..\\Robotiive_runner.exe Final1_1 ${testName}
                                 """, returnStatus: true)
 
                                 if (result != 0) {
