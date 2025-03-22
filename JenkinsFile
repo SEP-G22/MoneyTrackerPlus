@@ -14,8 +14,8 @@ pipeline {
                         chcp 65001 >nul
                         cd src
                         pyinstaller --onefile --windowed main.py
-                        if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
-                        if exist src\\dist\\config.json del src\\dist\\config.json
+                        if exist dist\\local_account_books.json del src\\dist\\local_account_books.json
+                        if exist dist\\config.json del src\\dist\\config.json
                     '''
                 }
             }
