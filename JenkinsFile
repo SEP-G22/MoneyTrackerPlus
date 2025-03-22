@@ -33,14 +33,14 @@ pipeline {
                 }
             }
         }
-        stage('Test 2') {
+        stage('Testcase4-01') {
             steps {
                 script {
                     echo "Running Test 2..."
                     def result = bat(script: '''
                         cd src\\dist
                         start main.exe
-                        ..\\..\\Robotiive_runner.exe Final Open_copy_1
+                        ..\\..\\Robotiive_runner.exe Final Testcase4-01
                     ''', returnStatus: true)
 
                     if (result != 0) {
