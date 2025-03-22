@@ -1,4 +1,4 @@
-def tests_1_1 = (6..9).collect { String.format("Testcase1-%02d", it) }
+def tests_1_1 = (1..5).collect { String.format("Testcase1-%02d", it) }
 def tests_1_2 = (6..9).collect { String.format("Testcase1-%02d", it) }
 def tests_2 = (1..8).collect { String.format("Testcase2-%02d", it) }
 def tests_3 = (1..8).collect { String.format("Testcase3-%02d", it) }
