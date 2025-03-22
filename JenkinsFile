@@ -21,7 +21,7 @@ pipeline {
         stage('Run Testcases 2-01 to 2-08') {
             steps {
                 script {
-                    tests.each { testName ->
+                    tests_2.each { testName ->
                         stage("${testName}") {
                             echo "Running ${testName}..."
 
