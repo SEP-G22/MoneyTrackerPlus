@@ -14,6 +14,8 @@ pipeline {
                         chcp 65001 >nul
                         cd src
                         pyinstaller --onefile --windowed main.py
+                        if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                        if exist src\\dist\\config.json del src\\dist\\config.json
                     '''
                 }
             }
@@ -23,17 +25,19 @@ pipeline {
                 script {
                     tests_2.each { testName ->
                         stage("${testName}") {
-                            echo "Running ${testName}..."
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                echo "Running ${testName}..."
 
-                            def result = bat(script: """
-                                cd src\\dist
-                                start main.exe
-                                ..\\..\\Robotiive_runner.exe Final2 ${testName}
-                            """, returnStatus: true)
+                                def result = bat(script: """
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final2 ${testName}
+                                """, returnStatus: true)
 
-                            if (result != 0) {
-                                error("${testName} Failed!")
-                            }
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
+                            } 
                         }
                     }
                 }
@@ -43,18 +47,24 @@ pipeline {
         stage('Run Testcases 4-01 to 4-10') {
             steps {
                 script {
+                    bat'''
+                    if exist src\\dist\\local_account_books.json del src\\dist\\local_account_books.json
+                    if exist src\\dist\\config.json del src\\dist\\config.json
+                    '''
                     tests_4.each { testName ->
                         stage("${testName}") {
-                            echo "Running ${testName}..."
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                echo "Running ${testName}..."
 
-                            def result = bat(script: """
-                                cd src\\dist
-                                start main.exe
-                                ..\\..\\Robotiive_runner.exe Final4 ${testName}
-                            """, returnStatus: true)
+                                def result = bat(script: """
+                                    cd src\\dist
+                                    start main.exe
+                                    ..\\..\\Robotiive_runner.exe Final4 ${testName}
+                                """, returnStatus: true)
 
-                            if (result != 0) {
-                                error("${testName} Failed!")
+                                if (result != 0) {
+                                    error("${testName} Failed!")
+                                }
                             }
                         }
                     }
