@@ -1,4 +1,5 @@
-def tests = (1..10).collect { String.format("Testcase4-%02d", it) }
+def tests_2 = (1..8).collect { String.format("Testcase2-%02d", it) }
+def tests_4 = (1..10).collect { String.format("Testcase4-%02d", it) }
 
 pipeline {
     agent any
@@ -17,9 +18,7 @@ pipeline {
                 }
             }
         }
-
-        // 用一個 script 來動態創建所有 test stages
-        stage('Run Testcases 4-01 to 4-10') {
+        stage('Run Testcases 2-01 to 2-08') {
             steps {
                 script {
                     tests.each { testName ->
@@ -29,7 +28,29 @@ pipeline {
                             def result = bat(script: """
                                 cd src\\dist
                                 start main.exe
-                                ..\\..\\Robotiive_runner.exe Final ${testName}
+                                ..\\..\\Robotiive_runner.exe Final2 ${testName}
+                            """, returnStatus: true)
+
+                            if (result != 0) {
+                                error("${testName} Failed!")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // 用一個 script 來動態創建所有 test stages
+        stage('Run Testcases 4-01 to 4-10') {
+            steps {
+                script {
+                    tests_4.each { testName ->
+                        stage("${testName}") {
+                            echo "Running ${testName}..."
+
+                            def result = bat(script: """
+                                cd src\\dist
+                                start main.exe
+                                ..\\..\\Robotiive_runner.exe Final4 ${testName}
                             """, returnStatus: true)
 
                             if (result != 0) {
