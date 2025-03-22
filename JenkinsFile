@@ -1,0 +1,44 @@
+def tests = (1..10).collect { String.format("Testcase4-%02d", it) }
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build & Prepare') {
+            steps {
+                script {
+                    echo "Current working dir: ${pwd()}"
+                    echo "Building the project..."
+                    bat '''
+                        chcp 65001 >nul
+                        cd src
+                        pyinstaller --onefile --windowed main.py
+                    '''
+                }
+            }
+        }
+
+        // 用一個 script 來動態創建所有 test stages
+        stage('Run Testcases 4-01 to 4-10') {
+            steps {
+                script {
+                    tests.each { testName ->
+                        stage("${testName}") {
+                            echo "Running ${testName}..."
+
+                            def result = bat(script: """
+                                cd src\\dist
+                                start main.exe
+                                ..\\..\\Robotiive_runner.exe Final ${testName}
+                            """, returnStatus: true)
+
+                            if (result != 0) {
+                                error("${testName} Failed!")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
