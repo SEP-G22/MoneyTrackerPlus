@@ -81,8 +81,8 @@ def generate_pie_chart(transactions):
 
     # Plot first pie chart (income vs expense)
     if sum(first_sizes) > 0:
-        axs[0].pie(first_sizes, labels=first_labels, autopct='%1.1f%%', startangle=90, colors=['#66b3ff','#ff9999'],
-                   wedgeprops=dict(width=0.3, edgecolor='w'))
+        axs[0].pie(first_sizes, labels=first_labels, autopct='%1.1f%%', startangle=90, colors=['#66b3ff','#ff9999'], wedgeprops=dict(width=0.3, edgecolor='w'))
+        axs[0].text(0, 0, f'結餘: \n{balance:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
     else:
         axs[0].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[0].set_title('收入與支出')
@@ -91,6 +91,8 @@ def generate_pie_chart(transactions):
     if sum(second_sizes) > 0:
         axs[1].pie(second_sizes, labels=second_labels, autopct='%1.1f%%', startangle=90,
                    colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+        axs[1].text(0, 0, f'總支出: \n{total_expense:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
+
     else:
         axs[1].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[1].set_title('支出分類')
@@ -99,6 +101,8 @@ def generate_pie_chart(transactions):
     if sum(third_sizes) > 0:
         axs[2].pie(third_sizes, labels=third_labels, autopct='%1.1f%%', startangle=90,
                    colors=plt.cm.Paired.colors, wedgeprops=dict(width=0.3, edgecolor='w'))
+        axs[2].text(0, 0, f'總收入: \n{total_income:.2f}', ha='center', va='center', fontsize=12, fontweight='bold')
+
     else:
         axs[2].text(0.5, 0.5, '無數據', ha='center', va='center', fontsize=12, color='gray')
     axs[2].set_title('收入分類')
