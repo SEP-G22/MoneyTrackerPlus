@@ -1,6 +1,9 @@
 from pathlib import Path
 import json
+from datetime import datetime
 
+current_time = datetime.now().isoformat(timespec='seconds')
+print(current_time)
 account_books_data = [
     {
         "name": "Testcase3-04",
@@ -9,7 +12,7 @@ account_books_data = [
             {
                 "id": 58085545537370935411690696787300281898,
                 "amount": 99.0,
-                "date": "2025-03-22T22:01:07",
+                "date": f"{current_time}",
                 "description": "lagend fight eat gold",
                 "category": {
                     "category": "Entertainment",
