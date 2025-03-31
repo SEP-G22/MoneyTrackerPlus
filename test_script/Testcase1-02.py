@@ -1,21 +1,18 @@
 from pathlib import Path
 import json
-from datetime import datetime
 
-current_time = datetime.now().isoformat(timespec='seconds')
-print(current_time)
 account_books_data = [
     {
-        "name": "Testcase3-04",
+        "name": "Testcase1-02",
         "type": 0,
         "transactions": [
             {
                 "id": 58085545537370935411690696787300281898,
                 "amount": 99.0,
-                "date": f"{current_time}",
+                "date": "2025-03-22T22:01:07",
                 "description": "lagend fight eat gold",
                 "category": {
-                    "category": "Entertainment",
+                    "category": "Personal",
                     "type": "Expense"
                 }
             }
@@ -26,7 +23,7 @@ account_books_data = [
 config_data = {
     "cred_path": "",
     "db_url": "",
-    "default_account_book": "Testcase3-04"
+    "default_account_book": "Testcase1-02"
 }
 
 dist_path = Path("src/dist")

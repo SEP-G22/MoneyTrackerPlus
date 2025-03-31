@@ -1,0 +1,686 @@
+Started by user unknown or anonymous
+Obtained JenkinsFile from git https://github.com/SEP-G22/MoneyTrackerPlus
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in C:\Users\user\.jenkins\workspace\Final Pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: git.exe
+No credentials specified
+ > git.exe rev-parse --resolve-git-dir C:\Users\user\.jenkins\workspace\Final Pipeline\.git # timeout=10
+Fetching changes from the remote Git repository
+ > git.exe config remote.origin.url https://github.com/SEP-G22/MoneyTrackerPlus # timeout=10
+Fetching upstream changes from https://github.com/SEP-G22/MoneyTrackerPlus
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.38.1.windows.1'
+ > git.exe fetch --tags --force --progress -- https://github.com/SEP-G22/MoneyTrackerPlus +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git.exe rev-parse "refs/remotes/origin/testing_setup^{commit}" # timeout=10
+Checking out Revision 9595f4c710f563a937378088025770877a72faa9 (refs/remotes/origin/testing_setup)
+ > git.exe config core.sparsecheckout # timeout=10
+ > git.exe checkout -f 9595f4c710f563a937378088025770877a72faa9 # timeout=10
+Commit message: "fix: script"
+ > git.exe rev-list --no-walk 9595f4c710f563a937378088025770877a72faa9 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Build & Prepare)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] pwd
+[Pipeline] echo
+Current working dir: C:\Users\user\.jenkins\workspace\Final Pipeline
+[Pipeline] echo
+Building the project...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>chcp 65001  1>nul 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src>pyinstaller --onefile --windowed main.py 
+382 INFO: PyInstaller: 6.12.0, contrib hooks: 2025.1
+382 INFO: Python: 3.12.7
+422 INFO: Platform: Windows-11-10.0.22631-SP0
+422 INFO: Python environment: C:\Users\user\AppData\Local\Programs\Python\Python312
+422 INFO: wrote C:\Users\user\.jenkins\workspace\Final Pipeline\src\main.spec
+422 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pyinstaller.exe',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312',
+ 'C:\\Users\\user\\AppData\\Roaming\\Python\\Python312\\site-packages',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages',
+ 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor',
+ 'C:\\Users\\user\\.jenkins\\workspace\\Final Pipeline\\src']
+1035 INFO: checking Analysis
+1106 INFO: checking PYZ
+1147 INFO: checking PKG
+1161 INFO: Bootloader C:\Users\user\AppData\Local\Programs\Python\Python312\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+1161 INFO: checking EXE
+1167 INFO: Build complete! The results are available in: C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src>if exist dist\local_account_books.json del dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src>if exist dist\config.json del dist\config.json 
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Testcases 1-06 to 1-09)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Testcase1-01)
+[Pipeline] echo
+Running Testcase1-01...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-01.py 
+C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe: can't open file 'C:\\Users\\user\\.jenkins\\workspace\\Final Pipeline\\test_script\\Testcase1-01.py': [Errno 2] No such file or directory
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_1 Testcase1-01 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-02)
+[Pipeline] echo
+Running Testcase1-02...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-02.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_1 Testcase1-02 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-03)
+[Pipeline] echo
+Running Testcase1-03...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-03.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_1 Testcase1-03 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-04)
+[Pipeline] echo
+Running Testcase1-04...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-04.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_1 Testcase1-04 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-05)
+[Pipeline] echo
+Running Testcase1-05...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-05.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_1 Testcase1-05 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Testcases 1-01 to 1-05)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Testcase1-06)
+[Pipeline] echo
+Running Testcase1-06...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-06.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_2 Testcase1-06 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-07)
+[Pipeline] echo
+Running Testcase1-07...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-07.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_2 Testcase1-07 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-08)
+[Pipeline] echo
+Running Testcase1-08...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-08.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_2 Testcase1-08 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase1-09)
+[Pipeline] echo
+Running Testcase1-09...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase1-09.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final1_2 Testcase1-09 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Testcases 2-01 to 2-08)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Testcase2-01)
+[Pipeline] echo
+Running Testcase2-01...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-01 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-02)
+[Pipeline] echo
+Running Testcase2-02...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-02 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-03)
+[Pipeline] echo
+Running Testcase2-03...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-03 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-04)
+[Pipeline] echo
+Running Testcase2-04...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-04 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-05)
+[Pipeline] echo
+Running Testcase2-05...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-05 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-06)
+[Pipeline] echo
+Running Testcase2-06...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-06 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-07)
+[Pipeline] echo
+Running Testcase2-07...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-07 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase2-08)
+[Pipeline] echo
+Running Testcase2-08...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final2 Testcase2-08 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Testcases 3-01 to 3-08)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Testcase3-01)
+[Pipeline] echo
+Running Testcase3-01...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-01.py 
+C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe: can't open file 'C:\\Users\\user\\.jenkins\\workspace\\Final Pipeline\\test_script\\Testcase3-01.py': [Errno 2] No such file or directory
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-01 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-02)
+[Pipeline] echo
+Running Testcase3-02...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-02.py 
+C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe: can't open file 'C:\\Users\\user\\.jenkins\\workspace\\Final Pipeline\\test_script\\Testcase3-02.py': [Errno 2] No such file or directory
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-02 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-03)
+[Pipeline] echo
+Running Testcase3-03...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-03.py 
+C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe: can't open file 'C:\\Users\\user\\.jenkins\\workspace\\Final Pipeline\\test_script\\Testcase3-03.py': [Errno 2] No such file or directory
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-03 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-04)
+[Pipeline] echo
+Running Testcase3-04...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-04.py 
+2025-03-30T10:17:54
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-04 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-05)
+[Pipeline] echo
+Running Testcase3-05...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-05.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-05 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-06)
+[Pipeline] echo
+Running Testcase3-06...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-06.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-06 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-07)
+[Pipeline] echo
+Running Testcase3-07...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-07.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-07 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase3-08)
+[Pipeline] echo
+Running Testcase3-08...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>py .\test_script\Testcase3-08.py 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final3 Testcase3-08 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Testcases 4-01 to 4-10)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\local_account_books.json del src\dist\local_account_books.json 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>if exist src\dist\config.json del src\dist\config.json 
+[Pipeline] stage
+[Pipeline] { (Testcase4-01)
+[Pipeline] echo
+Running Testcase4-01...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-01 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-02)
+[Pipeline] echo
+Running Testcase4-02...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-02 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-03)
+[Pipeline] echo
+Running Testcase4-03...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-03 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-04)
+[Pipeline] echo
+Running Testcase4-04...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-04 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-05)
+[Pipeline] echo
+Running Testcase4-05...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-05 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-06)
+[Pipeline] echo
+Running Testcase4-06...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-06 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-07)
+[Pipeline] echo
+Running Testcase4-07...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-07 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-08)
+[Pipeline] echo
+Running Testcase4-08...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-08 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-09)
+[Pipeline] echo
+Running Testcase4-09...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-09 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Testcase4-10)
+[Pipeline] echo
+Running Testcase4-10...
+[Pipeline] bat
+
+C:\Users\user\.jenkins\workspace\Final Pipeline>cd src\dist 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>start main.exe 
+
+C:\Users\user\.jenkins\workspace\Final Pipeline\src\dist>..\..\Robotiive_runner.exe Final4 Testcase4-10 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
