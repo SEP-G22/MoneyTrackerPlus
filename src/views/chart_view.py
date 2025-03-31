@@ -74,10 +74,21 @@ class ChartView(MoneyTrackerWidget):
         self.set_default_account_book()
     
     def set_default_account_book(self):
-        default_book = self.config_service.get_default_account_book()
+        """
+        設定帳本下拉選單為預設帳本。
+
+        從 config_service 取得使用者設定的預設帳本名稱，
+        並嘗試在 accountbook_combo(下拉選單) 中找到相符項目。
+        若找到，則將其設為當前選取項目。
+
+        預設帳本不存在或不在下拉選單中時，將不會變更選取項目。
+        """
+        default_book: str = self.config_service.get_default_account_book()
         if default_book:
+            # 嘗試在下拉選單中找到預設帳本名稱的索引，若找不到index 為 -1
             index = self.accountbook_combo.findText(default_book)
             if index != -1:
+                # 如果找到，則將下拉選單的當前索引設為該帳本名稱的索引
                 self.accountbook_combo.setCurrentIndex(index)
 
     def get_transactions(self, accountbook, start_date, end_date):
