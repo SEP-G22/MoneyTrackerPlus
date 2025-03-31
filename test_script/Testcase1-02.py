@@ -3,7 +3,7 @@ import json
 
 account_books_data = [
     {
-        "name": "Testcase1-07",
+        "name": "Testcase1-02",
         "type": 0,
         "transactions": [
             {
@@ -23,7 +23,7 @@ account_books_data = [
 config_data = {
     "cred_path": "",
     "db_url": "",
-    "default_account_book": "Testcase1-07"
+    "default_account_book": "Testcase1-02"
 }
 
 dist_path = Path("src/dist")
