@@ -4,7 +4,7 @@ from datetime import datetime
 from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QDateEdit, QHBoxLayout, QPushButton, QApplication, QComboBox, QLineEdit
-
+from models import AccountBook
 from .money_tracker_widget import MoneyTrackerWidget
 from services import *
 from utils import *
@@ -75,26 +75,40 @@ class ChartView(MoneyTrackerWidget):
     
     def set_default_account_book(self):
         """
-        設定帳本下拉選單為預設帳本。
+        Set the default account book in the dropdown (QComboBox).
 
-        從 config_service 取得使用者設定的預設帳本名稱，
-        並嘗試在 accountbook_combo(下拉選單) 中找到相符項目。
-        若找到，則將其設為當前選取項目。
+        Retrieves the default account book name from `config_service`,
+        finds it in the `accountbook_combo`, and sets it as the selected item
+        if it exists in the dropdown list.
 
-        預設帳本不存在或不在下拉選單中時，將不會變更選取項目。
+        If the default book is not found or is not set, the current selection remains unchanged.
         """
         default_book: str = self.config_service.get_default_account_book()
         if default_book:
-            # 嘗試在下拉選單中找到預設帳本名稱的索引，若找不到index 為 -1
-            index = self.accountbook_combo.findText(default_book)
+            # Attempt to find the index of the default book in the dropdown list
+            index: int = self.accountbook_combo.findText(default_book)
             if index != -1:
-                # 如果找到，則將下拉選單的當前索引設為該帳本名稱的索引
+                # If found(index != -1), set the current selection to the matched index
                 self.accountbook_combo.setCurrentIndex(index)
 
-    def get_transactions(self, accountbook, start_date, end_date):
+    def get_transactions(self, accountbook: AccountBook, start_date: datetime, end_date: datetime) -> list:
+        """
+        Retrieve transactions from an account book within a specified date range.
+
+        If the start date is after the end date, the two will be swapped to ensure
+        a valid chronological range.
+
+        Args:
+            accountbook (AccountBook): The account book containing transaction records.
+            start_date (datetime): The beginning of the date range.
+            end_date (datetime): The end of the date range.
+
+        Returns:
+            list: A list of transactions occurring within the specified date range.
+        """
         if start_date > end_date:
             start_date, end_date = end_date, start_date
-        transactions = []
+        transactions: list = []
         for transaction in accountbook.transactions:
             transaction_date = transaction.date.date() if isinstance(transaction.date, datetime) else transaction.date
             if start_date <= transaction_date <= end_date:
