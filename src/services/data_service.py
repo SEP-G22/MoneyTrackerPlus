@@ -39,6 +39,12 @@ class DataService:
         :param account_books: List of account books to write.
         :type account_books: List[AccountBook]
         """
+        if account_books is None:
+            raise TypeError("account_books can not be none")
+
+        if not isinstance(account_books, list) or not all(isinstance(book, AccountBook) for book in account_books):
+            raise TypeError("account_books must be a list of AccountBook instances")
+
         with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump([account_book.to_dict() for account_book in account_books], file, ensure_ascii=False, indent=4)
 
